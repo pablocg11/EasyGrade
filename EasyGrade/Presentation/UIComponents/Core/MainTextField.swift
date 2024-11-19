@@ -19,10 +19,3 @@ struct MainTextField: View {
     }
 }
 
-struct MainTextField_Previews: PreviewProvider {
-    @State static var sampleText: String = ""
-
-    static var previews: some View {
-        MainTextField(placeholder: "Sample text", text: $sampleText, autoCapitalize: true, autoCorrection: true)
-    }
-}

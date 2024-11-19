@@ -2,8 +2,6 @@ import SwiftUI
 
 struct AnswerTemplateCard: View {
     
-    let cameraUsageFactory: CameraUsageFactory
-    
     @ObservedObject var editViewModel: EditAnswerTemplateViewModel
     @ObservedObject var deleteViewModel: DeleteAnswerTemplateViewModel
     @ObservedObject var listViewModel: ListAnswerTemplateViewModel

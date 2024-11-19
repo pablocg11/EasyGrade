@@ -2,7 +2,14 @@
 import CoreData
 import SwiftUI
 
-class AnswerTemplateRepository: AnswerTemplateRepositoryType {
+protocol AnswerTemplateRepositoryProtocol {
+    func add(template: AnswerTemplate)
+    func getAllTemplates() -> [AnswerTemplate]
+    func deleteTemplate(id: UUID)
+    func updateTemplate(template: AnswerTemplate)
+}
+
+class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
     private let viewContext: NSManagedObjectContext
 
     init(viewContext: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {

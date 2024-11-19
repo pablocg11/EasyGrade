@@ -14,9 +14,12 @@ struct ScanGraterApp: App {
     }
     
     var body: some Scene {
+//        WindowGroup {
+//            MainView(createAnswerTemplateFactory: createAnswerTemplateFactory,
+//                     listAnswerTemplateFactory: listAnswerTemplateFactory)
+//        }
         WindowGroup {
-            MainView(createAnswerTemplateFactory: createAnswerTemplateFactory,
-                     listAnswerTemplateFactory: listAnswerTemplateFactory)
+            EvaluatedStudentFactory().createView()
         }
     }
 }

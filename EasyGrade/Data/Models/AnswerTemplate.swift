@@ -1,5 +1,4 @@
 
-
 import Foundation
 
 struct AnswerTemplate: Identifiable {
