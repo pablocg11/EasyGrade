@@ -5,13 +5,13 @@ This application allows you to create, edit, delete, and list exam templates, as
 # Features ✨
 
 🎓 **Exam Template Management**
-- Create Templates: Easily define exam templates with customizable options like:
- - Number of questions.
- - Number of answers per question.
- - Scoring rules (correct answer, incorrect answer penalty, unanswered penalty).
-- Edit Templates: Modify existing templates to fit your needs.
-- Delete Templates: Remove templates you no longer need.
-- List Templates: Browse and select from a comprehensive list of your templates.
+- **Create Templates**: Easily define exam templates with customizable options like:
+  - Number of questions.
+  - Number of answers per question.
+  - Scoring rules (correct answer, incorrect answer penalty, unanswered penalty).
+- **Edit Templates**: Modify existing templates to fit your needs.
+- **Delete Templates**: Remove templates you no longer need.
+- **List Templates**: Browse and select from a comprehensive list of your templates.
 
 📸 **Student Answer Recognition**
 - Use the device camera to capture an image of a student's exam.
