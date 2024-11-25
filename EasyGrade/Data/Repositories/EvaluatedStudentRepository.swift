@@ -35,7 +35,7 @@ class CoredDataEvaluatedStudentRepository: EvaluatedStudentRepository {
             guard let id = entity.id, let name = entity.name else { return nil }
             return EvaluatedStudent(
                 id: id,
-                dni: entity.dni,
+                dni: entity.dni!,
                 name: name,
                 answerMatrix: entity.answerMatrix,
                 templateId: entity.template?.id

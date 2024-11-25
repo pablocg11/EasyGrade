@@ -1,18 +1,18 @@
 
 import SwiftUI
 
-struct MainView: View {
-    let createAnswerTemplateFactory: CreateAnswerTemplateFactory
-    let listAnswerTemplateFactory: ListAnswerTemplateFactory
+struct ContentView: View {
+    let createAnswerTemplateView: CreateAnswerTemplateView
+    let listAnswerTemplateView: AnswerTemplateListView
 
     var body: some View {
         TabView {
-            createAnswerTemplateFactory.createView()
+            createAnswerTemplateView
                 .tabItem {
                     Label("Nueva plantilla", systemImage: "plus.app")
                 }
             
-            listAnswerTemplateFactory.createView()
+            listAnswerTemplateView
                 .tabItem {
                     Label("Plantillas", systemImage: "list.bullet.rectangle.portrait.fill")
                 }
@@ -21,7 +21,6 @@ struct MainView: View {
             UITabBar.appearance().backgroundColor = UIColor(Color("AppSecondaryColor"))
         }
         .accentColor(Color("AppPrimaryColor"))
-        
     }
 }
 

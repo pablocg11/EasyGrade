@@ -3,9 +3,6 @@ import SwiftUI
 
 @main
 struct ScanGraterApp: App {
-    let createAnswerTemplateFactory = CreateAnswerTemplateFactory()
-    let listAnswerTemplateFactory = ListAnswerTemplateFactory()
-
     init() {
         ValueTransformer.setValueTransformer(BoolMatrixTransformer(),
                                              forName: NSValueTransformerName("BoolMatrixTransformer"))
@@ -14,12 +11,9 @@ struct ScanGraterApp: App {
     }
     
     var body: some Scene {
-//        WindowGroup {
-//            MainView(createAnswerTemplateFactory: createAnswerTemplateFactory,
-//                     listAnswerTemplateFactory: listAnswerTemplateFactory)
-//        }
         WindowGroup {
-            EvaluatedStudentFactory().createView()
+            ContentView(createAnswerTemplateView: CreateAnswerTemplateFactory().createView(),
+                        listAnswerTemplateView: ListAnswerTemplateFactory().createView())
         }
     }
 }

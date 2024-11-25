@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct AnswerTemplateListView: View {
-    
     @ObservedObject var viewModel: ListAnswerTemplateViewModel
     @ObservedObject var editViewModel: EditAnswerTemplateViewModel
     @ObservedObject var deleteViewModel: DeleteAnswerTemplateViewModel
@@ -21,7 +20,6 @@ struct AnswerTemplateListView: View {
                 ProgressView("Cargando...")
                     .progressViewStyle(CircularProgressViewStyle())
                     .padding()
-
             }
             else{
                 VStack {
@@ -47,7 +45,12 @@ struct AnswerTemplateListView: View {
                             
                             List {
                                 ForEach(viewModel.answerTemplateList, id: \.id) { template in
-                                  
+                                    NavigationLink(destination: EvaluatedStudentFactory().createView(for: template)) {
+                                        AnswerTemplateCard(editViewModel: editViewModel,
+                                                           deleteViewModel: deleteViewModel,
+                                                           listViewModel: viewModel,
+                                                           template: template)
+                                    }
                                 }
                                 .listRowSeparator(.hidden)
                             }

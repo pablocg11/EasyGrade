@@ -1,7 +1,5 @@
-
-import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 struct CameraView: UIViewControllerRepresentable {
     
@@ -9,21 +7,22 @@ struct CameraView: UIViewControllerRepresentable {
     typealias UIViewControllerType = UIImagePickerController
     
     func makeUIViewController(context: Context) -> UIViewControllerType {
-        let viewController = UIViewControllerType()
-        viewController.delegate = context.coordinator
-        viewController.sourceType = .camera
-        viewController.cameraDevice = .rear
-        viewController.cameraOverlayView = .none
+        let picker = UIImagePickerController()
+        picker.delegate = context.coordinator
+        picker.sourceType = .camera
+        picker.cameraDevice = .rear
+        picker.cameraFlashMode = .off
+        picker.cameraCaptureMode = .photo
         
-        return viewController
+        return picker
     }
     
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-        //Not used
+        // Update if needed
     }
     
-    func makeCoordinator() -> CameraView.Coordinator {
-        return Coordinator(self)
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
     }
 }
 
@@ -39,27 +38,19 @@ extension CameraView {
             picker.dismiss(animated: true, completion: nil)
         }
         
-        func imagePickerController(_ picker: UIImagePickerController,
-                                   didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                if image.size.width > image.size.height {
-                    self.parent.image = image.resize(to: CGSize(width: 3000, height: 2250))
-                } else {
-                    self.parent.image = image
-                }
-                
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let image = info[.originalImage] as? UIImage {
+                self.parent.image = image.resizeIfNeeded()
                 picker.dismiss(animated: true, completion: nil)
             } else {
-                print("Error: No se pudo obtener la imagen")
+                print("Error: No image was captured")
             }
         }
     }
 }
 
 extension UIImage {
-    func resize(to size: CGSize) -> UIImage {
-        return UIGraphicsImageRenderer(size: size).image { _ in
-            draw(in: CGRect(origin: .zero, size: size))
-        }
+    func resizeIfNeeded() -> UIImage {
+        return self
     }
 }
