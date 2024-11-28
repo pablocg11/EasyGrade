@@ -4,14 +4,13 @@ struct AnswerTemplateListView: View {
     @ObservedObject var viewModel: ListAnswerTemplateViewModel
     @ObservedObject var editViewModel: EditAnswerTemplateViewModel
     @ObservedObject var deleteViewModel: DeleteAnswerTemplateViewModel
-    
-    init(viewModel: ListAnswerTemplateViewModel,
-         editViewModel: EditAnswerTemplateViewModel,
-         deleteViewModel: DeleteAnswerTemplateViewModel) {
-        
+    @ObservedObject var listEvaluatedStudentsViewModel: ListEvaluatedStudentsViewModel
+
+    init(viewModel: ListAnswerTemplateViewModel, editViewModel: EditAnswerTemplateViewModel, deleteViewModel: DeleteAnswerTemplateViewModel, listEvaluatedStudentsViewModel: ListEvaluatedStudentsViewModel) {
         self.viewModel = viewModel
         self.editViewModel = editViewModel
         self.deleteViewModel = deleteViewModel
+        self.listEvaluatedStudentsViewModel = listEvaluatedStudentsViewModel
     }
     
     var body: some View {
@@ -49,6 +48,7 @@ struct AnswerTemplateListView: View {
                                         AnswerTemplateCard(editViewModel: editViewModel,
                                                            deleteViewModel: deleteViewModel,
                                                            listViewModel: viewModel,
+                                                           listEvaluatedStudentsViewModel: listEvaluatedStudentsViewModel,
                                                            template: template)
                                     }
                                 }

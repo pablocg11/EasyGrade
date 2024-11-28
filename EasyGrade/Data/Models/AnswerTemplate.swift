@@ -1,7 +1,7 @@
 
 import Foundation
 
-struct AnswerTemplate: Identifiable {
+struct AnswerTemplate: Identifiable, Hashable {
     var id: UUID
     var name: String
     var date: Date
@@ -13,4 +13,5 @@ struct AnswerTemplate: Identifiable {
     var penaltyBlankAnswer: Double
     var cancelledQuestions: [Bool]
     var correctAnswerMatrix: [[Bool]]
+    var evaluatedStudents: [EvaluatedStudent]?
 }

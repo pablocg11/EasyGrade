@@ -6,7 +6,8 @@ class ListAnswerTemplateFactory {
     func createView() -> AnswerTemplateListView {
         return AnswerTemplateListView(viewModel: createViewModel(), 
                                       editViewModel: createEditViewModel(),
-                                      deleteViewModel: createDeleteViewModel())
+                                      deleteViewModel: createDeleteViewModel(),
+                                      listEvaluatedStudentsViewModel: createListEvaluatedStudentsViewModel())
     }
     
     private func createEditViewModel() -> EditAnswerTemplateViewModel {
@@ -15,6 +16,14 @@ class ListAnswerTemplateFactory {
     
     private func createDeleteViewModel() -> DeleteAnswerTemplateViewModel {
         return DeleteAnswerTemplateViewModel(deleteAnswerTemplateUseCase: createDeleteAnswerTemplateUseCase())
+    }
+    
+    private func createListEvaluatedStudentsViewModel() -> ListEvaluatedStudentsViewModel {
+        return ListEvaluatedStudentsViewModel(getAnswerTemplateUseCase: createGetAnswerTemplateUseCase())
+    }
+    
+    private func createGetAnswerTemplateUseCase() -> GetAnswerTemplateUseCase {
+        return GetAnswerTemplateUseCase(answerTemplateRepository: createRepository())
     }
     
     private func createUpdateAnswerTemplateUseCase() -> UpdateAnswerTemplateUseCaseType {

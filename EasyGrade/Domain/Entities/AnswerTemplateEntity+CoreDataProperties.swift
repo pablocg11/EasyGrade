@@ -9,6 +9,8 @@ extension AnswerTemplateEntity {
         return NSFetchRequest<AnswerTemplateEntity>(entityName: "AnswerTemplateEntity")
     }
 
+    @NSManaged public var cancelledQuestions: [Bool]?
+    @NSManaged public var correctAnswerMatrix: [[Bool]]?
     @NSManaged public var date: Date?
     @NSManaged public var id: UUID?
     @NSManaged public var multipleCorrectAnswers: Bool
@@ -18,8 +20,24 @@ extension AnswerTemplateEntity {
     @NSManaged public var penaltyBlankAnswer: Double
     @NSManaged public var penaltyIncorrectAnswer: Double
     @NSManaged public var scoreCorrectAnswer: Double
-    @NSManaged public var cancelledQuestions: [Bool]
-    @NSManaged public var correctAnswerMatrix: [[Bool]]
+    @NSManaged public var evaluatedStudents: NSSet?
+
+}
+
+// MARK: Generated accessors for evaluatedStudents
+extension AnswerTemplateEntity {
+
+    @objc(addEvaluatedStudentsObject:)
+    @NSManaged public func addToEvaluatedStudents(_ value: EvaluatedStudentEntity)
+
+    @objc(removeEvaluatedStudentsObject:)
+    @NSManaged public func removeFromEvaluatedStudents(_ value: EvaluatedStudentEntity)
+
+    @objc(addEvaluatedStudents:)
+    @NSManaged public func addToEvaluatedStudents(_ values: NSSet)
+
+    @objc(removeEvaluatedStudents:)
+    @NSManaged public func removeFromEvaluatedStudents(_ values: NSSet)
 
 }
 

@@ -2,70 +2,69 @@
 import Foundation
 
 protocol ExamCorrectionRepositoryProtocol {
-    func correctExam(studentAnswers: String, template: AnswerTemplate) async throws -> Double
+    func correctExam(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult
 }
 
 class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
     
-    func correctExam(studentAnswers: String, template: AnswerTemplate) async throws -> Double {
-        print("Inicio de la corrección del examen")
-        print("Respuestas del estudiante: \(studentAnswers)")
-        print("Plantilla: \(template)")
-        
+    func correctExam(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult {
         var totalScore = 0.0
-
+        var correctAnswers = [Int]()
+        var incorrectAnswers = [Int]()
+        var blankAnswers = [Int]()
+        var cancelledQuestions = [Int]()
+                
         for (index, studentAnswer) in studentAnswers.enumerated() {
-            print("\nPregunta \(index + 1):")
-            print("Respuesta del estudiante: \(studentAnswer)")
-            
             if index < template.cancelledQuestions.count, template.cancelledQuestions[index] {
-                print("Pregunta cancelada, saltando.")
+                cancelledQuestions.append(index + 1)
                 continue
             }
-
-            guard index < template.correctAnswerMatrix.count else {
-                print("Índice fuera de rango en la matriz de respuestas correctas, saltando.")
-                continue
-            }
-            let correctAnswers = template.correctAnswerMatrix[index]
-            print("Respuestas correctas esperadas: \(correctAnswers)")
             
-            guard let correctAnswerIndex = correctAnswers.firstIndex(of: true) else {
-                print("No hay respuestas correctas marcadas, saltando.")
+            guard index < template.correctAnswerMatrix.count else {
                 continue
             }
-            print("Índice de la respuesta correcta: \(correctAnswerIndex)")
-
+            let correctAnswersMatrix = template.correctAnswerMatrix[index]
+            
+            guard let correctAnswerIndex = correctAnswersMatrix.firstIndex(of: true) else {
+                continue
+            }
+                        
             if studentAnswer == "-" {
-                print("Respuesta no contestada, aplicando penalización: -\(template.penaltyBlankAnswer)")
                 totalScore -= template.penaltyBlankAnswer
+                blankAnswers.append(index + 1)
             } else if let studentAnswerIndex = studentAnswer.asAnswerIndex() {
-                print("Índice de la respuesta del estudiante: \(studentAnswerIndex)")
                 if studentAnswerIndex == correctAnswerIndex {
-                    print("Respuesta correcta, sumando puntos: +\(template.scoreCorrectAnswer)")
                     totalScore += template.scoreCorrectAnswer
+                    correctAnswers.append(index + 1)
                 } else {
-                    print("Respuesta incorrecta, aplicando penalización: -\(template.penaltyIncorrectAnswer)")
                     totalScore -= template.penaltyIncorrectAnswer
+                    incorrectAnswers.append(index + 1)
                 }
             } else {
-                print("Respuesta inválida, aplicando penalización: -\(template.penaltyIncorrectAnswer)")
                 totalScore -= template.penaltyIncorrectAnswer
+                incorrectAnswers.append(index + 1)
             }
         }
-
-        return totalScore * 10.0
+        
+        let normalizedScore = totalScore * 10.0
+        
+        return ExamCorrectionResult(
+            totalScore: normalizedScore,
+            correctAnswers: correctAnswers,
+            incorrectAnswers: incorrectAnswers,
+            blankAnswers: blankAnswers,
+            cancelledQuestions: cancelledQuestions
+        )
     }
 }
+
 
 private extension Character {
     func asAnswerIndex() -> Int? {
         guard let asciiValue = self.asciiValue, asciiValue >= 65, asciiValue <= 90 else {
-            print("Carácter no válido para índice: \(self)")
             return nil
         }
         let index = Int(asciiValue - 65)
-        print("Carácter \(self) convertido a índice: \(index)")
         return index
     }
 }

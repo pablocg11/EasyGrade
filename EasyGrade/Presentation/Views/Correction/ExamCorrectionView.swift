@@ -15,9 +15,36 @@ struct ExamCorrectionView: View {
     }
     
     var body: some View {
-        VStack {
-            if let examScore = viewmodel.examScore {
-                CorrectionProgressView(progress: examScore, limit: 100.0)
+        VStack(alignment: .leading) {
+            if let examCorrectionResult = viewmodel.examScore {
+                sectionHeader("Puntuación del alumno")
+
+                CorrectionProgressView(progress: examCorrectionResult.totalScore, limit: 100.0)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                    Text("\(examCorrectionResult.correctAnswers.count)")
+                        .font(.headline)
+                        
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                    Text("\(examCorrectionResult.incorrectAnswers.count)")
+                        .font(.headline)
+
+                    Image(systemName: "square.dashed")
+                        .foregroundColor(.gray)
+                    Text("\(examCorrectionResult.blankAnswers.count)")
+                        .font(.headline)
+                    
+                    Image(systemName: "nosign")
+                        .foregroundColor(.red)
+                    Text("\(examCorrectionResult.cancelledQuestions.count)")
+                        .font(.headline)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+
             } else if viewmodel.isLoading {
                 ProgressView("Corrigiendo...")
                     .font(.headline)
@@ -29,9 +56,16 @@ struct ExamCorrectionView: View {
                     .padding()
             }
         }
-        .navigationTitle(student.name)
+        .padding(.vertical)
         .onAppear {
             viewmodel.onAppear(studentAnswers: studentAnswers, template: template)
         }
+    }
+    
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.headline)
+            .foregroundColor(Color("AppPrimaryColor"))
+            .padding(.vertical, 4)
     }
 }

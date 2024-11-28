@@ -6,19 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		D6BA8F922CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA8F8E2CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataClass.swift */; };
-		D6BA8F932CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA8F8F2CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataProperties.swift */; };
-		D6BA8F942CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA8F902CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataClass.swift */; };
-		D6BA8F952CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BA8F912CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataProperties.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		D61ECD082CCFDC390017CB74 /* EasyGrade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyGrade.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D6BA8F8E2CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AnswerTemplateEntity+CoreDataClass.swift"; path = "EasyGrade/Domain/Entities/AnswerTemplateEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		D6BA8F8F2CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AnswerTemplateEntity+CoreDataProperties.swift"; path = "EasyGrade/Domain/Entities/AnswerTemplateEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		D6BA8F902CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "EvaluatedStudentEntity+CoreDataClass.swift"; path = "EasyGrade/Domain/Entities/EvaluatedStudentEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		D6BA8F912CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "EvaluatedStudentEntity+CoreDataProperties.swift"; path = "EasyGrade/Domain/Entities/EvaluatedStudentEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -43,10 +32,6 @@
 		D61ECCFF2CCFDC390017CB74 = {
 			isa = PBXGroup;
 			children = (
-				D6BA8F8E2CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataClass.swift */,
-				D6BA8F8F2CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataProperties.swift */,
-				D6BA8F902CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataClass.swift */,
-				D6BA8F912CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataProperties.swift */,
 				D61ECD0A2CCFDC390017CB74 /* EasyGrade */,
 				D61ECD092CCFDC390017CB74 /* Products */,
 			);
@@ -134,10 +119,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6BA8F922CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataClass.swift in Sources */,
-				D6BA8F932CECAE6500BEEB89 /* AnswerTemplateEntity+CoreDataProperties.swift in Sources */,
-				D6BA8F942CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataClass.swift in Sources */,
-				D6BA8F952CECAE6500BEEB89 /* EvaluatedStudentEntity+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

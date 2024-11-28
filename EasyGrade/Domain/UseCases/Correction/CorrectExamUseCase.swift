@@ -2,7 +2,7 @@
 import Foundation
 
 protocol CorrectExamUseCaseProtocol {
-    func execute(studentAnswers: String, template: AnswerTemplate) async throws -> Double
+    func execute(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult
 }
 
 class CorrectExamUseCase: CorrectExamUseCaseProtocol {
@@ -12,7 +12,7 @@ class CorrectExamUseCase: CorrectExamUseCaseProtocol {
         self.repository = repository
     }
     
-    func execute(studentAnswers: String, template: AnswerTemplate) async throws -> Double {
+    func execute(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult {
         try await repository.correctExam(studentAnswers: studentAnswers, template: template)
     }
 }

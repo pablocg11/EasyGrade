@@ -28,7 +28,7 @@ struct CorrectionProgressView: View {
                 .bold()
                 .foregroundColor(progressColor)
         }
-        .padding(100)
+        .padding(40)
         .onAppear {
             animateProgress()
         }
@@ -39,8 +39,4 @@ struct CorrectionProgressView: View {
             examCorrectionScore = progress
         }
     }
-}
-
-#Preview {
-    CorrectionProgressView(progress: 70.5, limit: 100.0)
 }

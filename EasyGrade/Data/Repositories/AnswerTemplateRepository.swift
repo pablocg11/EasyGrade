@@ -48,8 +48,8 @@ class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
                     scoreCorrectAnswer: entity.scoreCorrectAnswer,
                     penaltyIncorrectAnswer: entity.penaltyIncorrectAnswer,
                     penaltyBlankAnswer: entity.penaltyBlankAnswer,
-                    cancelledQuestions: entity.cancelledQuestions,
-                    correctAnswerMatrix: entity.correctAnswerMatrix
+                    cancelledQuestions: entity.cancelledQuestions ?? [],
+                    correctAnswerMatrix: entity.correctAnswerMatrix ?? [[]]
                 )
             }
         } catch {
@@ -60,24 +60,35 @@ class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
     
     func getTemplate(id: UUID) -> AnswerTemplate? {
         let request: NSFetchRequest<AnswerTemplateEntity> = AnswerTemplateEntity.fetchRequest()
-        
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
         do {
             if let entity = try viewContext.fetch(request).first {
-                return AnswerTemplate(id: entity.id ?? UUID(),
-                                      name: entity.name ?? "",
-                                      date: entity.date ?? Date(),
-                                      numberOfQuestions: entity.numberOfQuestions,
-                                      numberOfAnswersPerQuestion: entity.numberOfAnswersPerQuestion,
-                                      multipleCorrectAnswers: entity.multipleCorrectAnswers,
-                                      scoreCorrectAnswer: entity.scoreCorrectAnswer,
-                                      penaltyIncorrectAnswer: entity.penaltyIncorrectAnswer,
-                                      penaltyBlankAnswer: entity.penaltyBlankAnswer,
-                                      cancelledQuestions: entity.cancelledQuestions,
-                                      correctAnswerMatrix: entity.correctAnswerMatrix)
-            }
-            else {
+                let evaluatedStudents = (entity.evaluatedStudents as? Set<EvaluatedStudentEntity>)?.map { studentEntity in
+                    EvaluatedStudent(
+                        id: studentEntity.id ?? UUID(),
+                        dni: studentEntity.dni ?? "",
+                        name: studentEntity.name ?? "",
+                        score: studentEntity.scoreValue?.doubleValue ?? 0.0,
+                        answerMatrix: studentEntity.answerMatrix ?? [[]]
+                    )
+                }
+                
+                return AnswerTemplate(
+                    id: entity.id ?? UUID(),
+                    name: entity.name ?? "",
+                    date: entity.date ?? Date(),
+                    numberOfQuestions: Int16(entity.numberOfQuestions),
+                    numberOfAnswersPerQuestion: Int16(entity.numberOfAnswersPerQuestion),
+                    multipleCorrectAnswers: entity.multipleCorrectAnswers,
+                    scoreCorrectAnswer: entity.scoreCorrectAnswer,
+                    penaltyIncorrectAnswer: entity.penaltyIncorrectAnswer,
+                    penaltyBlankAnswer: entity.penaltyBlankAnswer,
+                    cancelledQuestions: entity.cancelledQuestions ?? [],
+                    correctAnswerMatrix: entity.correctAnswerMatrix ?? [[]],
+                    evaluatedStudents: evaluatedStudents
+                )
+            } else {
                 print("No template found with ID: \(id)")
                 return nil
             }

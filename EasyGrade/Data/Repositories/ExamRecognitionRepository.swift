@@ -38,12 +38,14 @@ class ExamRecognitionRepository: ExamRecognitionRepositoryProtocol {
                     }
                     
                     if let answers = self.extractData(from: recognizedText, prefix: "respuestas:") {
-                        recognizedAnswers = answers
-                        if answers.count != template.numberOfQuestions {
+                        let cleanedAnswers = answers.replacingOccurrences(of: " ", with: "")
+                        recognizedAnswers = cleanedAnswers
+                        
+                        if cleanedAnswers.count != template.numberOfQuestions {
                             continuation.resume(
                                 throwing: ExamRecognitionError.invalidAnswersCount(
                                     expected: Int(template.numberOfQuestions),
-                                    actual: answers.count
+                                    actual: cleanedAnswers.count
                                 )
                             )
                             return

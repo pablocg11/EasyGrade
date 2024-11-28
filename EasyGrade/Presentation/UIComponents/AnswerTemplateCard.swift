@@ -5,10 +5,11 @@ struct AnswerTemplateCard: View {
     @ObservedObject var editViewModel: EditAnswerTemplateViewModel
     @ObservedObject var deleteViewModel: DeleteAnswerTemplateViewModel
     @ObservedObject var listViewModel: ListAnswerTemplateViewModel
+    @ObservedObject var listEvaluatedStudentsViewModel: ListEvaluatedStudentsViewModel
     
     var template: AnswerTemplate
-    
     @State private var navigateToEdit = false
+    @State private var nagivateToList = false
     
     var firstWord: String {
         return template.name.split(separator: " ").first.map(String.init)?.uppercased() ?? ""
@@ -45,6 +46,12 @@ struct AnswerTemplateCard: View {
                 } label: {
                     Label("Borrar", systemImage: "trash")
                 }
+                
+                Button {
+                    nagivateToList = true
+                } label: {
+                    Label("Ver", systemImage: "eye")
+                }
             }
             .navigationDestination(isPresented: $navigateToEdit) {
                 AnswerTemplateEditView(viewModel: editViewModel,
@@ -52,6 +59,10 @@ struct AnswerTemplateCard: View {
                 .onDisappear {
                     listViewModel.getAllAnswerTemplate()
                 }
+            }
+            .navigationDestination(isPresented: $nagivateToList) {
+                EvaluatedStudentsListView(viewModel: listEvaluatedStudentsViewModel,
+                                          template: template)
             }
         }
         .padding()

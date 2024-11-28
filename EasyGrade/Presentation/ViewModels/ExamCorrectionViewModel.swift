@@ -5,7 +5,7 @@ class ExamCorrectionViewModel: ObservableObject {
     private let examCorrectionUseCase: CorrectExamUseCase
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
-    @Published var examScore: Double?
+    @Published var examScore: ExamCorrectionResult?
     
     init(examCorrectionUseCase: CorrectExamUseCase) {
         self.examCorrectionUseCase = examCorrectionUseCase
@@ -18,8 +18,8 @@ class ExamCorrectionViewModel: ObservableObject {
         
         Task {
             do {
-                let score = try await examCorrectionUseCase.execute(studentAnswers: studentAnswers, template: template)
-                await handleResult(score: score)
+                let examCorrectionResult = try await examCorrectionUseCase.execute(studentAnswers: studentAnswers, template: template)
+                await handleResult(examCorrectionResult: examCorrectionResult)
             } catch {
                 await handleError(error)
             }
@@ -27,9 +27,9 @@ class ExamCorrectionViewModel: ObservableObject {
     }
     
     @MainActor
-    private func handleResult(score: Double) {
+    private func handleResult(examCorrectionResult: ExamCorrectionResult) {
         self.isLoading = false
-        self.examScore = score
+        self.examScore = examCorrectionResult
     }
     
     @MainActor
