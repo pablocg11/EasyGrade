@@ -7,7 +7,7 @@ struct CorrectionProgressView: View {
     var limit: Double
     
     private var progressColor: Color {
-        examCorrectionScore < (0.5 * limit) ? .red : .green
+        progress < (0.5 * limit) ? .red : .green
     }
     
     var body: some View {
@@ -18,12 +18,12 @@ struct CorrectionProgressView: View {
                 .foregroundColor(.gray)
             
             Circle()
-                .trim(from: 0.0, to: examCorrectionScore / 100.0)
+                .trim(from: 0.0, to: examCorrectionScore / limit)
                 .stroke(style: StrokeStyle(lineWidth: 20, lineCap: .round, lineJoin: .round))
                 .foregroundColor(progressColor)
                 .rotationEffect(Angle(degrees: -90))
             
-            Text("\(String(format: "%.1f", progress))%")
+            Text("\(String(format: "%.1f", progress))")
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(progressColor)

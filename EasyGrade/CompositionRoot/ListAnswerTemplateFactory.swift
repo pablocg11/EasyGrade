@@ -19,17 +19,27 @@ class ListAnswerTemplateFactory {
     }
     
     private func createListEvaluatedStudentsViewModel() -> ListEvaluatedStudentsViewModel {
-        return ListEvaluatedStudentsViewModel(getAnswerTemplateUseCase: createGetAnswerTemplateUseCase())
+        return ListEvaluatedStudentsViewModel(fetchEvaluatedStudentsUseCase: createFetchEvaluatedStudentsUseCase(),
+                                              deleteEvaluatedStudentUseCase: createDeleteEvaluatedStudentUseCase(),
+                                              exportEvaluatedStudentsFileUseCase: createExportEvaluatedStudentsFileUseCase())
     }
     
-    private func createGetAnswerTemplateUseCase() -> GetAnswerTemplateUseCase {
-        return GetAnswerTemplateUseCase(answerTemplateRepository: createRepository())
+    private func createFetchEvaluatedStudentsUseCase() -> FetchEvaluatedStudentsUseCase {
+        return FetchEvaluatedStudentsUseCase(repository: createEvaluatedStudentRepository())
+    }
+    
+    private func createDeleteEvaluatedStudentUseCase() -> DeleteEvaluatedStudentUseCase {
+        return DeleteEvaluatedStudentUseCase(repository: createEvaluatedStudentRepository())
+    }
+    
+    private func createExportEvaluatedStudentsFileUseCase() -> ExportEvaluatedStudentsFileUseCase {
+        return ExportEvaluatedStudentsFileUseCase(repository: createEvaluatedStudentRepository())
     }
     
     private func createUpdateAnswerTemplateUseCase() -> UpdateAnswerTemplateUseCaseType {
         return UpdateAnswerTemplateUseCase(answerTemplateRepository: createRepository())
     }
-    
+
     private func createDeleteAnswerTemplateUseCase() -> DeleteAnswerTemplateUseCaseType {
         return DeleteAnswerTemplateUseCase(answerTemplateRepository: createRepository())
     }
@@ -40,6 +50,10 @@ class ListAnswerTemplateFactory {
     
     private func createListAnswerTemplateUseCase() -> GetAnswerTemplatesUseCaseType {
         return GetAnswerTemplatesUseCase(answerTemplateRepository: createRepository())
+    }
+    
+    private func createEvaluatedStudentRepository() -> EvaluatedStudentRepository {
+        return EvaluatedStudentRepository()
     }
 
     private func createRepository() -> AnswerTemplateRepository {

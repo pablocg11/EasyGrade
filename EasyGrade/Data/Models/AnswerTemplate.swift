@@ -13,5 +13,5 @@ struct AnswerTemplate: Identifiable, Hashable {
     var penaltyBlankAnswer: Double
     var cancelledQuestions: [Bool]
     var correctAnswerMatrix: [[Bool]]
-    var evaluatedStudents: [EvaluatedStudent]?
+    var evaluatedStudents: [EvaluatedStudent]
 }

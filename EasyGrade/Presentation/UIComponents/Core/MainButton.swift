@@ -19,11 +19,3 @@ struct MainButton: View {
         .disabled(disabled)
     }
 }
-
-struct MainButton_Previews: PreviewProvider {
-    static var previews: some View {
-        MainButton(title: "Press Me", action: {
-            print("Button pressed")
-        }, disabled: false)
-    }
-}

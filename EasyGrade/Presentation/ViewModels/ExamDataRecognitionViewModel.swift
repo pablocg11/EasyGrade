@@ -17,12 +17,13 @@ class ExamDataRecognitionViewModel: ObservableObject {
         self.saveEvaluatedStudentUseCase = saveEvaluatedStudentUseCase
     }
     
-    func saveEvaluatedStudent(with evaluatedStudent: EvaluatedStudent) {
+    func saveEvaluatedStudent(evaluatedStudent: EvaluatedStudent, template: AnswerTemplate) {
         isLoading = true
         
         Task {
             do {
-                try await self.saveEvaluatedStudentUseCase.execute(student: evaluatedStudent)
+                try await self.saveEvaluatedStudentUseCase.execute(student: evaluatedStudent,
+                                                                   template: template)
                 await MainActor.run {
                     self.isLoading = false
                     self.errorMessage = nil

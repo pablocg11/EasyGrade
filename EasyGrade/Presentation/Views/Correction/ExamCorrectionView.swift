@@ -17,38 +17,51 @@ struct ExamCorrectionView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if let examCorrectionResult = viewmodel.examScore {
-                sectionHeader("Puntuación del alumno")
-
-                CorrectionProgressView(progress: examCorrectionResult.totalScore, limit: 100.0)
-                    .frame(maxWidth: .infinity, alignment: .center)
+                
+                MainText(text: "Puntuación del alumno",
+                         textColor: Color("AppPrimaryColor"),
+                         font: .headline)
                 
                 HStack {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.green)
-                    Text("\(examCorrectionResult.correctAnswers.count)")
-                        .font(.headline)
-                        
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.red)
-                    Text("\(examCorrectionResult.incorrectAnswers.count)")
-                        .font(.headline)
-
-                    Image(systemName: "square.dashed")
-                        .foregroundColor(.gray)
-                    Text("\(examCorrectionResult.blankAnswers.count)")
-                        .font(.headline)
+                    CorrectionProgressView(progress: examCorrectionResult.totalScore, limit: 10.0)                        .frame(maxWidth: .infinity, alignment: .center)
                     
-                    Image(systemName: "nosign")
-                        .foregroundColor(.red)
-                    Text("\(examCorrectionResult.cancelledQuestions.count)")
-                        .font(.headline)
+                    VStack {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            Text("\(examCorrectionResult.correctAnswers.count)")
+                                .font(.headline)
+                        }
+                            
+                        HStack {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
+                            Text("\(examCorrectionResult.incorrectAnswers.count)")
+                                .font(.headline)
+                        }
+
+                        HStack {
+                            Image(systemName: "square.dashed")
+                                .foregroundColor(.gray)
+                            Text("\(examCorrectionResult.blankAnswers.count)")
+                                .font(.headline)
+                        }
+                        
+                        HStack {
+                            Image(systemName: "nosign")
+                                .foregroundColor(.red)
+                            Text("\(examCorrectionResult.cancelledQuestions.count)")
+                                .font(.headline)
+                        }
+                    }
                 }
+                .padding()
                 .frame(maxWidth: .infinity, alignment: .center)
+                .background(Color("AppSecondaryColor"))
+                .cornerRadius(10)
 
             } else if viewmodel.isLoading {
-                ProgressView("Corrigiendo...")
-                    .font(.headline)
-                    .padding()
+                MainLoading()
             } else if let errorMessage = viewmodel.errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
@@ -60,12 +73,5 @@ struct ExamCorrectionView: View {
         .onAppear {
             viewmodel.onAppear(studentAnswers: studentAnswers, template: template)
         }
-    }
-    
-    private func sectionHeader(_ title: String) -> some View {
-        Text(title)
-            .font(.headline)
-            .foregroundColor(Color("AppPrimaryColor"))
-            .padding(.vertical, 4)
     }
 }

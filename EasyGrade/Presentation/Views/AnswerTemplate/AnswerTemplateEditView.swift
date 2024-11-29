@@ -16,6 +16,7 @@ struct AnswerTemplateEditView: View {
     @State private var blankAnswerPenalty: Double
     @State private var cancelledQuestions: [Bool]
     @State private var correctAnswerMatrix: [[Bool]]
+    @State private var evaluatedStudents: [EvaluatedStudent] = []
 
     init(viewModel: EditAnswerTemplateViewModel, template: AnswerTemplate) {
         self.viewModel = viewModel
@@ -145,7 +146,8 @@ struct AnswerTemplateEditView: View {
             penaltyIncorrectAnswer: wrongAnswerPenalty,
             penaltyBlankAnswer: blankAnswerPenalty,
             cancelledQuestions: cancelledQuestions,
-            correctAnswerMatrix: correctAnswerMatrix
+            correctAnswerMatrix: correctAnswerMatrix,
+            evaluatedStudents: evaluatedStudents
         )
         viewModel.updateAnswerTemplate(template: updatedTemplate)
     }

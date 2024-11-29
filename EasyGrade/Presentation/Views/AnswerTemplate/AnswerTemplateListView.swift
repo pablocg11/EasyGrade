@@ -16,9 +16,7 @@ struct AnswerTemplateListView: View {
     var body: some View {
         NavigationStack {
             if viewModel.showLoading {
-                ProgressView("Cargando...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .padding()
+                MainLoading()
             }
             else{
                 VStack {

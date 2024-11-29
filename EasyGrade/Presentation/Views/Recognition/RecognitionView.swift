@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RecognitionView: View {
     @State private var imageTaken: UIImage?
+    @State private var cameraPresented: Bool = true
     @State var template: AnswerTemplate
     @ObservedObject var viewModel: ExamDataRecognitionViewModel
     @ObservedObject var examCorrectionViewModel: ExamCorrectionViewModel
@@ -14,8 +15,10 @@ struct RecognitionView: View {
     var body: some View {
         VStack {
             if imageTaken == nil {
-                CameraView(image: $imageTaken)
+                CameraView(image: $imageTaken,
+                           isPresented: $cameraPresented)
                     .ignoresSafeArea()
+                    .navigationBarBackButtonHidden()
             } else {
                 displayContent()
             }
@@ -23,32 +26,16 @@ struct RecognitionView: View {
         .onChange(of: imageTaken) {
             handleNewImage(imageTaken, template)
         }
-        .onAppear {
-            if let student = viewModel.currentlyRecognizedStudent,
-               let recognizedAnswers = viewModel.recognizedAnswers {
-                editableStudentName = student.name
-                editableStudentDNI = student.dni
-                editableStudentAnswers = recognizedAnswers
-            }
-        }
         .toolbar(.hidden, for: .tabBar)
     }
 
     private func displayContent() -> some View {
         Group {
             if viewModel.isLoading {
-                loadingIndicator
+                MainLoading()
             } else {
                 recognizedDataBody()
             }
-        }
-    }
-
-    private var loadingIndicator: some View {
-        VStack {
-            ProgressView("Procesando...")
-                .progressViewStyle(CircularProgressViewStyle())
-                .padding()
         }
     }
 
@@ -59,7 +46,6 @@ struct RecognitionView: View {
             if let student = viewModel.currentlyRecognizedStudent, let recognizedAnswers = viewModel.recognizedAnswers {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
-                        
                         ExamCorrectionView(
                             viewmodel: examCorrectionViewModel,
                             student: student,
@@ -69,30 +55,41 @@ struct RecognitionView: View {
                         
                         Divider()
                         
-                        sectionHeader("Datos del alumno")
+                        MainText(text: "Datos del alumno",
+                                 textColor: Color("AppPrimaryColor"),
+                                 font: .headline)
+                        .padding(.top)
                         
                         MainTextField(
                             placeholder: "Nombre",
-                            text: .constant(student.name),
+                            text: $editableStudentName,
                             autoCapitalize: true,
                             autoCorrection: true
                         )
                         
                         MainTextField(
                             placeholder: "DNI",
-                            text: .constant(student.dni),
+                            text: $editableStudentDNI,
                             autoCapitalize: true,
                             autoCorrection: false
                         )
                         
                         MainTextField(
                             placeholder: "Respuestas",
-                            text: .constant(recognizedAnswers),
+                            text: $editableStudentAnswers,
                             autoCapitalize: false,
                             autoCorrection: false
                         )
                     }
                     .padding()
+                }
+                .onAppear {
+                    if let student = viewModel.currentlyRecognizedStudent,
+                       let recognizedAnswers = viewModel.recognizedAnswers {
+                        editableStudentName = student.name
+                        editableStudentDNI = student.dni
+                        editableStudentAnswers = recognizedAnswers
+                    }
                 }
                 
                 MainButton(
@@ -105,10 +102,10 @@ struct RecognitionView: View {
                             score: examCorrectionViewModel.examScore?.totalScore,
                             answerMatrix: parseAnswers(editableStudentAnswers, template: template)
                         )
-                        self.viewModel.saveEvaluatedStudent(with: updatedStudent)
+                        self.viewModel.saveEvaluatedStudent(evaluatedStudent: updatedStudent, template: template)
                         dismiss()
                     },
-                    disabled: student.name.isEmpty || student.dni.isEmpty
+                    disabled: editableStudentName.isEmpty || editableStudentDNI.isEmpty
                 )
                 .padding()
                 
@@ -134,13 +131,6 @@ struct RecognitionView: View {
                 Spacer()
             }
         }
-    }
-
-    private func sectionHeader(_ title: String) -> some View {
-        Text(title)
-            .font(.headline)
-            .foregroundColor(Color("AppPrimaryColor"))
-            .padding(.vertical, 4)
     }
 
     private func errorView(message: String) -> some View {

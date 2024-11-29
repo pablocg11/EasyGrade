@@ -29,7 +29,17 @@ class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
         entity.penaltyBlankAnswer = template.penaltyBlankAnswer
         entity.cancelledQuestions = template.cancelledQuestions
         entity.correctAnswerMatrix = template.correctAnswerMatrix
-
+        
+        entity.evaluatedStudents = Set(template.evaluatedStudents.map { student in
+            let studentEntity = EvaluatedStudentEntity(context: viewContext)
+            studentEntity.id = student.id
+            studentEntity.dni = student.dni
+            studentEntity.name = student.name
+            studentEntity.scoreValue = NSDecimalNumber(value: student.score ?? 0.0)
+            studentEntity.answerMatrix = student.answerMatrix
+            return studentEntity
+        })
+        
         saveContext()
     }
 
@@ -49,7 +59,16 @@ class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
                     penaltyIncorrectAnswer: entity.penaltyIncorrectAnswer,
                     penaltyBlankAnswer: entity.penaltyBlankAnswer,
                     cancelledQuestions: entity.cancelledQuestions ?? [],
-                    correctAnswerMatrix: entity.correctAnswerMatrix ?? [[]]
+                    correctAnswerMatrix: entity.correctAnswerMatrix ?? [[]],
+                    evaluatedStudents: entity.evaluatedStudents.map { studentEntity in
+                        EvaluatedStudent(
+                            id: studentEntity.id ?? UUID(),
+                            dni: studentEntity.dni ?? "",
+                            name: studentEntity.name ?? "",
+                            score: studentEntity.scoreValue?.doubleValue ?? 0.0,
+                            answerMatrix: studentEntity.answerMatrix ?? [[]]
+                        )
+                    }
                 )
             }
         } catch {
@@ -64,7 +83,7 @@ class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
         
         do {
             if let entity = try viewContext.fetch(request).first {
-                let evaluatedStudents = (entity.evaluatedStudents as? Set<EvaluatedStudentEntity>)?.map { studentEntity in
+                let evaluatedStudents = entity.evaluatedStudents.map { studentEntity in
                     EvaluatedStudent(
                         id: studentEntity.id ?? UUID(),
                         dni: studentEntity.dni ?? "",
@@ -126,6 +145,8 @@ class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
                 entity.penaltyBlankAnswer = template.penaltyBlankAnswer
                 entity.cancelledQuestions = template.cancelledQuestions
                 entity.correctAnswerMatrix = template.correctAnswerMatrix
+                
+                entity.evaluatedStudents = []
 
                 saveContext()
             }

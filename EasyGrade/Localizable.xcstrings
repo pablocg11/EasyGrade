@@ -1,0 +1,66 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "-" : {
+
+    },
+    "%@" : {
+
+    },
+    "%lld" : {
+
+    },
+    "+" : {
+
+    },
+    "Borrar" : {
+
+    },
+    "Cancelar" : {
+
+    },
+    "Confirmar" : {
+
+    },
+    "DNI" : {
+
+    },
+    "Edición de plantilla" : {
+
+    },
+    "Editar" : {
+
+    },
+    "Editar Estudiante" : {
+
+    },
+    "Key" : {
+      "extractionState" : "manual"
+    },
+    "Key 1" : {
+      "extractionState" : "manual"
+    },
+    "Nombre" : {
+
+    },
+    "Nueva plantilla" : {
+
+    },
+    "Plantillas" : {
+
+    },
+    "Preguntas anuladas" : {
+
+    },
+    "Respuestas correctas" : {
+
+    },
+    "Ver" : {
+
+    }
+  },
+  "version" : "1.0"
+}

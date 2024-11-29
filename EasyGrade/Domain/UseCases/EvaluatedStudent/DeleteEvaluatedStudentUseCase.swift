@@ -1,11 +1,11 @@
 
 import Foundation
 
-protocol SaveEvaluatedStudentUseCaseProtocol {
+protocol DeleteEvaluatedStudentUseCaseProtocol {
     func execute(student: EvaluatedStudent, template: AnswerTemplate) async throws
 }
 
-class SaveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCaseProtocol {
+class DeleteEvaluatedStudentUseCase: DeleteEvaluatedStudentUseCaseProtocol {
     private let repository: EvaluatedStudentRepository
     
     init(repository: EvaluatedStudentRepository) {
@@ -13,6 +13,6 @@ class SaveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCaseProtocol {
     }
     
     func execute(student: EvaluatedStudent, template: AnswerTemplate) async throws {
-        try await repository.saveStudentinTemplate(student: student, template: template)
+        try await self.repository.deleteStudentFromTemplate(student: student, template: template)
     }
 }

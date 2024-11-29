@@ -13,7 +13,7 @@ class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
         var incorrectAnswers = [Int]()
         var blankAnswers = [Int]()
         var cancelledQuestions = [Int]()
-                
+        
         for (index, studentAnswer) in studentAnswers.enumerated() {
             if index < template.cancelledQuestions.count, template.cancelledQuestions[index] {
                 cancelledQuestions.append(index + 1)
@@ -28,7 +28,7 @@ class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
             guard let correctAnswerIndex = correctAnswersMatrix.firstIndex(of: true) else {
                 continue
             }
-                        
+            
             if studentAnswer == "-" {
                 totalScore -= template.penaltyBlankAnswer
                 blankAnswers.append(index + 1)
@@ -46,10 +46,9 @@ class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
             }
         }
         
-        let normalizedScore = totalScore * 10.0
-        
+        totalScore = max(0.0, min(10.0, totalScore)) // Asegurar que el puntaje esté entre 0 y 10
         return ExamCorrectionResult(
-            totalScore: normalizedScore,
+            totalScore: totalScore,
             correctAnswers: correctAnswers,
             incorrectAnswers: incorrectAnswers,
             blankAnswers: blankAnswers,
@@ -57,7 +56,6 @@ class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
         )
     }
 }
-
 
 private extension Character {
     func asAnswerIndex() -> Int? {

@@ -4,6 +4,7 @@ import UIKit
 struct CameraView: UIViewControllerRepresentable {
     
     @Binding var image: UIImage?
+    @Binding var isPresented: Bool
     typealias UIViewControllerType = UIImagePickerController
     
     func makeUIViewController(context: Context) -> UIViewControllerType {
@@ -36,6 +37,7 @@ extension CameraView {
         
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             picker.dismiss(animated: true, completion: nil)
+            parent.isPresented = false 
         }
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {

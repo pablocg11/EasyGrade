@@ -20,7 +20,7 @@ extension AnswerTemplateEntity {
     @NSManaged public var penaltyBlankAnswer: Double
     @NSManaged public var penaltyIncorrectAnswer: Double
     @NSManaged public var scoreCorrectAnswer: Double
-    @NSManaged public var evaluatedStudents: NSSet?
+    @NSManaged public var evaluatedStudents: Set<EvaluatedStudentEntity>
 
 }
 
