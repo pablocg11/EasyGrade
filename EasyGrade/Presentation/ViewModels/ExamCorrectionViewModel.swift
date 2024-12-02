@@ -35,6 +35,6 @@ class ExamCorrectionViewModel: ObservableObject {
     @MainActor
     private func handleError(_ error: Error) {
         self.isLoading = false
-        self.errorMessage = "Ocurrió un error: \(error.localizedDescription)"
+        self.errorMessage = "\(error.localizedDescription)"
     }
 }

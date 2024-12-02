@@ -1,11 +1,13 @@
+
 import Foundation
 
 class ListEvaluatedStudentsViewModel: ObservableObject {
     private let fetchEvaluatedStudentsUseCase: FetchEvaluatedStudentsUseCase
     private let deleteEvaluatedStudentUseCase: DeleteEvaluatedStudentUseCase
     private let exportEvaluatedStudentsFileUseCase: ExportEvaluatedStudentsFileUseCase
+    
     @Published var errorMessage: String?
-    @Published var evaluatedStudents: [EvaluatedStudent]
+    @Published var evaluatedStudents: [EvaluatedStudent] = []
     @Published var isLoading: Bool = false
     
     init(fetchEvaluatedStudentsUseCase: FetchEvaluatedStudentsUseCase,
@@ -14,7 +16,6 @@ class ListEvaluatedStudentsViewModel: ObservableObject {
         self.fetchEvaluatedStudentsUseCase = fetchEvaluatedStudentsUseCase
         self.deleteEvaluatedStudentUseCase = deleteEvaluatedStudentUseCase
         self.exportEvaluatedStudentsFileUseCase = exportEvaluatedStudentsFileUseCase
-        self.evaluatedStudents = []
     }
     
     func onAppear(template: AnswerTemplate) {
@@ -49,7 +50,8 @@ class ListEvaluatedStudentsViewModel: ObservableObject {
                 }
             } catch {
                 await MainActor.run {
-                    //handleError
+                    self.isLoading = false
+                    self.handleError(error)
                 }
             }
         }
@@ -63,17 +65,19 @@ class ListEvaluatedStudentsViewModel: ObservableObject {
             do {
                 try await deleteEvaluatedStudentUseCase.execute(student: evaluatedStudent, template: template)
                 await MainActor.run {
+                    self.evaluatedStudents.removeAll { $0.id == evaluatedStudent.id }
                     self.isLoading = false
                 }
             } catch {
                 await MainActor.run {
-                    //handleError
+                    self.isLoading = false
+                    self.handleError(error)
                 }
             }
         }
     }
     
     private func handleError(_ error: Error) {
-        errorMessage = "Error al cargar la plantilla: \(error.localizedDescription)"
+        errorMessage = "\(error.localizedDescription)"
     }
 }

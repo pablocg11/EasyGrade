@@ -9,7 +9,7 @@ struct EvaluatedStudentRow: View {
             Image(systemName: "person.fill")
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: 20, maxHeight: 20)
+                .frame(maxWidth: 15, maxHeight: 15)
                 .padding()
                 .background(Color("AppPrimaryColor"))
                 .foregroundStyle(.white)
@@ -24,7 +24,6 @@ struct EvaluatedStudentRow: View {
                          textColor: .black,
                          font: .caption,
                          fontWeight: .light)
-
             }
             
             Spacer()

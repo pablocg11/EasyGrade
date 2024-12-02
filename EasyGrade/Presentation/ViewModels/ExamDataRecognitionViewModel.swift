@@ -8,6 +8,7 @@ class ExamDataRecognitionViewModel: ObservableObject {
     
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
+    @Published var isScanning: Bool = false
     @Published var currentlyRecognizedStudent: EvaluatedStudent?
     @Published var recognizedAnswers: String?
     
@@ -35,12 +36,18 @@ class ExamDataRecognitionViewModel: ObservableObject {
     }
     
     func recognizeExamData(with image: CGImage, template: AnswerTemplate) {
-        isLoading = true
-        
+        isScanning = true
+        errorMessage = nil
+        currentlyRecognizedStudent = nil
+        recognizedAnswers = nil
+
         Task {
-            let result = try await self.recognizeExamDataUseCase.execute(image: image,
-                                                                         template: template)
-            await self.handleResultExamRecognition(result)
+            do {
+                let result = try await self.recognizeExamDataUseCase.execute(image: image, template: template)
+                await self.handleResultExamRecognition(result)
+            } catch {
+                await handleError(error)
+            }
         }
     }
     
@@ -48,7 +55,7 @@ class ExamDataRecognitionViewModel: ObservableObject {
         switch result {
         case .success(let (name, dni, recognizedAnswers)):
             await MainActor.run {
-                self.isLoading = false
+                self.isScanning = false
                 self.errorMessage = nil
                 if let studentDni = dni, let studentName = name, let recognizedAnswers {
                     self.currentlyRecognizedStudent = EvaluatedStudent(dni: studentDni, name: studentName)
@@ -62,8 +69,9 @@ class ExamDataRecognitionViewModel: ObservableObject {
     
     private func handleError(_ error: Error) async {
         await MainActor.run {
+            self.isScanning = false
             self.isLoading = false
-            self.errorMessage = "Error al reconocer los datos: \(error.localizedDescription)"
+            self.errorMessage = "\(error.localizedDescription)"
         }
     }
 }

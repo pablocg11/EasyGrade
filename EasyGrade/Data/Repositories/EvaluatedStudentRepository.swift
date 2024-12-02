@@ -93,13 +93,13 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             
             for studentEntity in templateEntity.evaluatedStudents {
                 let studentRow = """
-                "\(studentEntity.dni ?? "")","\(studentEntity.name ?? "")","\(studentEntity.scoreValue?.doubleValue ?? 0.0)"
+                "\(studentEntity.dni ?? "")","\(studentEntity.name ?? "")","\(String(format: "%.2f", studentEntity.scoreValue?.doubleValue ?? 0.0))"
                 """
                 csvContent.append("\(studentRow)\n")
             }
             
             let rawFileName = templateEntity.name ?? "EvaluatedStudents"
-                   let sanitizedFileName = rawFileName.replacingOccurrences(of: "/", with: "_")
+            let sanitizedFileName = rawFileName.replacingOccurrences(of: "/", with: "_")
                                        .replacingOccurrences(of: "\\", with: "_")
                                        .replacingOccurrences(of: ":", with: "_")
                                        .replacingOccurrences(of: "*", with: "_")
@@ -112,20 +112,30 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             let tempDirectory = FileManager.default.temporaryDirectory
             let fileURL = tempDirectory.appendingPathComponent("\(sanitizedFileName).csv")
             
-            self.shareCSV(fileURL: fileURL)
+            do {
+                try csvContent.write(to: fileURL, atomically: true, encoding: .utf8)
+            } catch {
+                throw NSError(domain: "ExportError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to write CSV file."])
+            }
+            
+            DispatchQueue.main.async {
+                self.shareCSV(fileURL: fileURL)
+            }
         }
     }
     
     func shareCSV(fileURL: URL) {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let rootViewController = scene.windows.first?.rootViewController else {
-            print("No root view controller found")
-            return
-        }
+        DispatchQueue.main.async {
+            guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let rootViewController = scene.windows.first?.rootViewController else {
+                print("No root view controller found")
+                return
+            }
 
-        let activityVC = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-        activityVC.popoverPresentationController?.sourceView = rootViewController.view
-        rootViewController.present(activityVC, animated: true, completion: nil)
+            let activityVC = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+            activityVC.popoverPresentationController?.sourceView = rootViewController.view
+            rootViewController.present(activityVC, animated: true, completion: nil)
+        }
     }
     
     private func saveContext() throws {

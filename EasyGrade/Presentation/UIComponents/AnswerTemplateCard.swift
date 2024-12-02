@@ -38,29 +38,54 @@ struct AnswerTemplateCard: View {
     
     private var headerContent: some View {
         HStack {
-            Image(systemName: "questionmark.text.page.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: 25, maxHeight: 25)
-                .padding()
-                .background(.white)
-                .foregroundStyle(Color("AppPrimaryColor"))
-                .cornerRadius(50)
-            
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 5) {
                 MainText(
                     text: template.name,
                     textColor: Color("AppPrimaryColor"),
                     font: .callout,
-                    fontWeight: .semibold
+                    fontWeight: .bold
                 )
-                MainText(
-                    text: DateFormatterUtility.shared.string(from: template.date),
-                    textColor: Color("AppPrimaryColor"),
-                    font: .subheadline
-                )
+
+                HStack {
+                    HStack(spacing: 3) {
+                        Image(systemName: "calendar")
+                                .foregroundColor(Color(.gray))
+                        MainText(
+                            text: DateFormatterUtility.shared.string(from: template.date),
+                            textColor: Color(.gray),
+                            font: .caption,
+                            fontWeight: .regular
+                        )
+                    }
+                    
+                    Spacer()
+
+                    HStack(spacing: 3) {
+                        Image(systemName: "questionmark.circle")
+                                .foregroundColor(Color(.gray))
+                        MainText(
+                            text: "\(template.numberOfQuestions) preguntas",
+                            textColor: Color(.gray),
+                            font: .caption,
+                            fontWeight: .regular
+                        )
+                    }
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 3) {
+                        Image(systemName: "square.stack")
+                            .foregroundColor(Color(.gray))
+                        MainText(
+                            text: "\(template.numberOfAnswersPerQuestion) respuestas",
+                            textColor: Color(.gray),
+                            font: .caption,
+                            fontWeight: .regular
+                        )
+                    }
+                }
+                .padding(5)
             }
-            .padding(.horizontal)
             
             Spacer()
         }
@@ -78,7 +103,7 @@ struct AnswerTemplateCard: View {
     private var deleteButton: some View {
         Button(role: .destructive) {
             deleteViewModel.deleteAnswerTemplate(templateId: template.id)
-            listViewModel.getAllAnswerTemplate()
+            listViewModel.answerTemplateList.removeAll { $0.id == template.id }
         } label: {
             Label("Borrar", systemImage: "trash")
         }

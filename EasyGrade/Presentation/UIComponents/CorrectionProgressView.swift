@@ -23,7 +23,7 @@ struct CorrectionProgressView: View {
                 .foregroundColor(progressColor)
                 .rotationEffect(Angle(degrees: -90))
             
-            Text("\(String(format: "%.1f", progress))")
+            Text("\(String(format: "%.2f", progress))")
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(progressColor)

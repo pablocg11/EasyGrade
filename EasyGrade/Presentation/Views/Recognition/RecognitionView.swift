@@ -16,11 +16,13 @@ struct RecognitionView: View {
         VStack {
             if imageTaken == nil {
                 CameraView(image: $imageTaken,
-                           isPresented: $cameraPresented)
-                    .ignoresSafeArea()
-                    .navigationBarBackButtonHidden()
+                           onDismiss: {
+                    dismiss()
+                })
+                .navigationBarBackButtonHidden()
+                .ignoresSafeArea()
             } else {
-                displayContent()
+                recognizedDataBody()
             }
         }
         .onChange(of: imageTaken) {
@@ -29,91 +31,92 @@ struct RecognitionView: View {
         .toolbar(.hidden, for: .tabBar)
     }
 
-    private func displayContent() -> some View {
-        Group {
-            if viewModel.isLoading {
-                MainLoading()
-            } else {
-                recognizedDataBody()
-            }
-        }
-    }
-
     private func recognizedDataBody() -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 10) {
             imagePreview
-            
-            if let student = viewModel.currentlyRecognizedStudent, let recognizedAnswers = viewModel.recognizedAnswers {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
-                        ExamCorrectionView(
-                            viewmodel: examCorrectionViewModel,
-                            student: student,
-                            template: template,
-                            studentAnswers: recognizedAnswers
-                        )
-                        
-                        Divider()
-                        
-                        MainText(text: "Datos del alumno",
-                                 textColor: Color("AppPrimaryColor"),
-                                 font: .headline)
-                        .padding(.top)
-                        
-                        MainTextField(
-                            placeholder: "Nombre",
-                            text: $editableStudentName,
-                            autoCapitalize: true,
-                            autoCorrection: true
-                        )
-                        
-                        MainTextField(
-                            placeholder: "DNI",
-                            text: $editableStudentDNI,
-                            autoCapitalize: true,
-                            autoCorrection: false
-                        )
-                        
-                        MainTextField(
-                            placeholder: "Respuestas",
-                            text: $editableStudentAnswers,
-                            autoCapitalize: false,
-                            autoCorrection: false
-                        )
-                    }
-                    .padding()
-                }
-                .onAppear {
-                    if let student = viewModel.currentlyRecognizedStudent,
-                       let recognizedAnswers = viewModel.recognizedAnswers {
-                        editableStudentName = student.name
-                        editableStudentDNI = student.dni
-                        editableStudentAnswers = recognizedAnswers
-                    }
-                }
-                
-                MainButton(
-                    title: "Guardar",
-                    action: {
-                        let updatedStudent = EvaluatedStudent(
-                            id: UUID(),
-                            dni: editableStudentDNI,
-                            name: editableStudentName,
-                            score: examCorrectionViewModel.examScore?.totalScore,
-                            answerMatrix: parseAnswers(editableStudentAnswers, template: template)
-                        )
-                        self.viewModel.saveEvaluatedStudent(evaluatedStudent: updatedStudent, template: template)
-                        dismiss()
-                    },
-                    disabled: editableStudentName.isEmpty || editableStudentDNI.isEmpty
-                )
-                .padding()
-                
-            } else if let errorMessage = viewModel.errorMessage {
-                errorView(message: errorMessage)
-            }
-            
+            Divider()
             Spacer()
+                    
+            if viewModel.isScanning {
+                MainScanning()
+                Spacer()
+            } else if let errorMessage = viewModel.errorMessage {
+                ErrorView(errorMessage: errorMessage, action: { imageTaken = nil })
+            }
+            else {
+                if let student = viewModel.currentlyRecognizedStudent, let recognizedAnswers = viewModel.recognizedAnswers {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            ExamCorrectionView(
+                                viewmodel: examCorrectionViewModel,
+                                student: student,
+                                template: template,
+                                studentAnswers: recognizedAnswers
+                            )
+                            
+                            Divider()
+                            
+                            MainText(text: "Datos del alumno",
+                                     textColor: Color("AppPrimaryColor"),
+                                     font: .headline)
+                            .padding(.top)
+                            
+                            MainTextField(
+                                placeholder: "Nombre",
+                                text: $editableStudentName,
+                                autoCapitalize: true,
+                                autoCorrection: true
+                            )
+                            
+                            MainTextField(
+                                placeholder: "DNI",
+                                text: $editableStudentDNI,
+                                autoCapitalize: true,
+                                autoCorrection: false
+                            )
+                            
+                            MainTextField(
+                                placeholder: "Respuestas",
+                                text: $editableStudentAnswers,
+                                autoCapitalize: false,
+                                autoCorrection: false
+                            )
+                        }
+                        .padding()
+                    }
+                    .onAppear {
+                        if let student = viewModel.currentlyRecognizedStudent,
+                           let recognizedAnswers = viewModel.recognizedAnswers {
+                            editableStudentName = student.name
+                            editableStudentDNI = student.dni
+                            editableStudentAnswers = recognizedAnswers
+                        }
+                    }
+                    
+                    MainButton(
+                        title: "Guardar",
+                        action: {
+                            let updatedStudent = EvaluatedStudent(
+                                id: UUID(),
+                                dni: editableStudentDNI,
+                                name: editableStudentName,
+                                score: examCorrectionViewModel.examScore?.totalScore,
+                                answerMatrix: parseAnswers(editableStudentAnswers, template: template)
+                            )
+                            viewModel.saveEvaluatedStudent(evaluatedStudent: updatedStudent, template: template)
+                            editableStudentName = ""
+                            editableStudentDNI = ""
+                            editableStudentAnswers = ""
+                            dismiss()
+                        },
+                        disabled: editableStudentName.isEmpty || editableStudentDNI.isEmpty
+                    )
+                    .padding()
+                    
+                } else if let errorMessage = viewModel.errorMessage {
+                    ErrorView(errorMessage: errorMessage, action: {imageTaken = nil})
+                }
+            }
         }
         .navigationTitle(template.name)
     }
@@ -132,21 +135,7 @@ struct RecognitionView: View {
             }
         }
     }
-
-    private func errorView(message: String) -> some View {
-        VStack(spacing: 10) {
-            Text(message)
-                .foregroundColor(.red)
-                .font(.body)
-                .multilineTextAlignment(.center)
-            
-            MainButton(title: "Reintentar", action: {
-                imageTaken = nil
-            }, disabled: false)
-        }
-        .padding()
-    }
-
+    
     private func handleNewImage(_ newImage: UIImage?, _ template: AnswerTemplate) {
         if let newImage = newImage {
             Task {

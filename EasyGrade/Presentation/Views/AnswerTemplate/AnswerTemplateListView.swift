@@ -21,17 +21,8 @@ struct AnswerTemplateListView: View {
             else{
                 VStack {
                     if viewModel.answerTemplateList.isEmpty {
-                        VStack(spacing: 20) {
-                            Image(systemName: "list.bullet.clipboard")
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundColor(Color("AppPrimaryColor"))
-                                .frame(maxWidth: 80, maxHeight: 80)
-                            
-                            MainText(text: "No hay plantillas disponibles",
-                                     textColor: Color("AppPrimaryColor"),
-                                     font: .title3)
-                        }
+                        EmptyListView(description: "Aún no hay plantillas disponibles",
+                                      icon: "checklist")
                     } else {
                         VStack(alignment: .leading) {
                             MainText(text: "Lista de plantillas",
@@ -42,12 +33,12 @@ struct AnswerTemplateListView: View {
                             
                             List {
                                 ForEach(viewModel.answerTemplateList, id: \.id) { template in
-                                    NavigationLink(destination: EvaluatedStudentFactory().createView(for: template)) {
+                                    NavigationLink(destination: EvaluatedStudentFactory().createView(for: template)){
                                         AnswerTemplateCard(editViewModel: editViewModel,
-                                                           deleteViewModel: deleteViewModel,
-                                                           listViewModel: viewModel,
-                                                           listEvaluatedStudentsViewModel: listEvaluatedStudentsViewModel,
-                                                           template: template)
+                                                               deleteViewModel: deleteViewModel,
+                                                               listViewModel: viewModel,
+                                                               listEvaluatedStudentsViewModel: listEvaluatedStudentsViewModel,
+                                                               template: template)
                                     }
                                 }
                                 .listRowSeparator(.hidden)

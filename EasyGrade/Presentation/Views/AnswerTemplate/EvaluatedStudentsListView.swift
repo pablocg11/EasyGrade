@@ -11,50 +11,77 @@ struct EvaluatedStudentsListView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             if viewModel.isLoading {
                 MainLoading()
             } else if viewModel.evaluatedStudents.isEmpty {
-                EmptyListView(description: "Aun no hay estudiantes evaluados")
+                EmptyListView(description: "Aún no hay estudiantes evaluados",
+                              icon: "graduationcap")
             } else {
-                List {
-                    ForEach(viewModel.evaluatedStudents, id: \.self) { student in
-                        EvaluatedStudentRow(student: student)
-                    }
-                    .onDelete(perform: deleteStudent)
-                    
-                    HStack {
-                        MainText(text: "🧑‍🎓 \(viewModel.evaluatedStudents.count)", font: .callout)
+                VStack(spacing: 16) {
+                    List {
+                        ForEach(viewModel.evaluatedStudents, id: \.self) { student in
+                            EvaluatedStudentRow(student: student)
+                        }
+                        .onDelete(perform: deleteStudent)
                         
-                        let passedStudentsCount = viewModel.evaluatedStudents.filter { $0.score ?? 0 >= 5 }.count
-                        MainText(text: "✅ \(passedStudentsCount)", font: .callout)
-                        
-                        let notPassedStudentsCount = viewModel.evaluatedStudents.filter { $0.score ?? 0 < 5 }.count
-                        MainText(text: "❌ \(notPassedStudentsCount)", font: .callout)
+                        statisticsView
                     }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
+                    .listStyle(InsetGroupedListStyle())
                 }
-                
-                MainButton(title: "Exportar",
-                           action: {
-                    viewModel.exportEvaluatedStudents(template: template)
-                },
-                           disabled: viewModel.isLoading)
-                .padding()
-                .background(.white)
             }
-            
             if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .padding()
+                ErrorView(errorMessage: errorMessage, action: {})
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    viewModel.exportEvaluatedStudents(template: template)
+                }, label: {
+                    Image(systemName: "square.and.arrow.up")
+                })
+                .disabled(viewModel.evaluatedStudents.isEmpty)
             }
         }
         .onAppear {
             viewModel.onAppear(template: template)
         }
         .navigationTitle(template.name)
+    }
+    
+    private var statisticsView: some View {
+        HStack {
+            statisticCard(icon: "person.3.fill", count: viewModel.evaluatedStudents.count, label: "Evaluados", color: .blue)
+            statisticCard(icon: "checkmark.seal.fill", count: approvedStudents.count, label: "Aprobados", color: .green)
+            statisticCard(icon: "xmark.seal.fill", count: notApprovedStudents.count, label: "Suspensos", color: .red)
+        }
+    }
+    
+    private func statisticCard(icon: String, count: Int, label: String, color: Color) -> some View {
+        VStack(spacing: 3) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.callout)
+                    .foregroundColor(color)
+                Text("\(count)")
+                    .font(.callout)
+                    .fontWeight(.bold)
+            }
+            Text(label)
+                .font(.caption)
+                .foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+    }
+    
+    private var approvedStudents: [EvaluatedStudent] {
+        viewModel.evaluatedStudents.filter { $0.score ?? 0 >= 5 }
+    }
+    
+    private var notApprovedStudents: [EvaluatedStudent] {
+        viewModel.evaluatedStudents.filter { $0.score ?? 0 < 5 }
     }
     
     private func deleteStudent(at offsets: IndexSet) {
