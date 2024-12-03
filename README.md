@@ -1,3 +1,8 @@
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3f168da0-f02c-4629-880f-7db6188485c5" width="200"/>
+</p>
+
 # 📚 Easy Grade 📚
 Welcome to Easy Grade, a powerful and intuitive app designed to streamline the management of exams.
 This application allows you to create, edit, delete, and list exam templates, as well as recognize and correct student answers effortlessly.
