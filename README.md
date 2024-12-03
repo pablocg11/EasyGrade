@@ -27,6 +27,10 @@ This application allows you to create, edit, delete, and list exam templates, as
 - Apply scoring rules to calculate a normalized score.
 - Visualize the correction progress with smooth animations.
 
+📤 **Export to CSV File**
+- Generate and export exam results as a CSV file.
+- Share the exported results via other apps or save them locally for further analysis.
+
 # Tech Stack 🛠️
 
 📱 **SwiftUI**
