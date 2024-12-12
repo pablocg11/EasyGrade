@@ -1,8 +1,11 @@
 
 import Foundation
 
+protocol GetAnswerTemplateUseCaseType {
+    func execute(id: UUID) async throws -> AnswerTemplate?
+}
+
 class GetAnswerTemplateUseCase: GetAnswerTemplateUseCaseType {
-    
     private let repository: AnswerTemplateRepository
 
     init(answerTemplateRepository: AnswerTemplateRepository) {

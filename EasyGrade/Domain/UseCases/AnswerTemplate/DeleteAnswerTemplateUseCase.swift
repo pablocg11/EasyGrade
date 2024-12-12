@@ -1,6 +1,10 @@
 
 import Foundation
 
+protocol DeleteAnswerTemplateUseCaseType {
+    func execute(id: UUID) async throws
+}
+
 class DeleteAnswerTemplateUseCase: DeleteAnswerTemplateUseCaseType {
     private let repository: AnswerTemplateRepository
 

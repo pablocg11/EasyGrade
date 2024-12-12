@@ -1,6 +1,10 @@
 
 import Foundation
 
+protocol UpdateAnswerTemplateUseCaseType {
+    func execute(template: AnswerTemplate) async throws
+}
+
 class UpdateAnswerTemplateUseCase: UpdateAnswerTemplateUseCaseType {
     private let repository: AnswerTemplateRepository
 
