@@ -46,7 +46,7 @@ class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
             }
         }
         
-        totalScore = max(0.0, min(10.0, totalScore)) // Asegurar que el puntaje esté entre 0 y 10
+        totalScore = max(0.0, min(10.0, totalScore)) 
         return ExamCorrectionResult(
             totalScore: totalScore,
             correctAnswers: correctAnswers,

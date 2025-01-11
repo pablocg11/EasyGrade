@@ -23,7 +23,7 @@ struct AnswerTemplateCard: View {
                 .navigationDestination(isPresented: $navigateToEdit) {
                     AnswerTemplateEditView(viewModel: editViewModel, template: template)
                         .onDisappear {
-                            listViewModel.getAllAnswerTemplate()
+                            listViewModel.onAppear()
                         }
                 }
                 .navigationDestination(isPresented: $navigateToList) {

@@ -5,6 +5,7 @@ import UIKit
 
 protocol EvaluatedStudentRepositoryProtocol {
     func saveStudentinTemplate(student: EvaluatedStudent, template: AnswerTemplate) async throws
+    func updateEvaluatedStudentScore(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: AnswerTemplate) async throws
     func fetchAllStudentsFromTemplate(template: AnswerTemplate) async throws -> [EvaluatedStudent]
 }
 
@@ -16,23 +17,41 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
     }
     
     func saveStudentinTemplate(student: EvaluatedStudent, template: AnswerTemplate) async throws {
-        try await self.viewContext.perform {
-            
+        return try await self.viewContext.perform {
             let fetchRequest: NSFetchRequest<AnswerTemplateEntity> = AnswerTemplateEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", template.id as CVarArg)
-            
+
             guard let templateEntity = try self.viewContext.fetch(fetchRequest).first else {
                 throw NSError(domain: "SaveStudentError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Template not found."])
             }
-            
+
+            if let existingStudent = templateEntity.evaluatedStudents.first(where: { $0.dni == student.dni }) {
+                self.viewContext.delete(existingStudent)
+            }
+
             let studentEntity = EvaluatedStudentEntity(context: self.viewContext)
             studentEntity.id = student.id
             studentEntity.dni = student.dni
             studentEntity.score = student.score
             studentEntity.name = student.name
             studentEntity.answerMatrix = student.answerMatrix
+
+            templateEntity.addToEvaluatedStudents(studentEntity)
+
+            try self.saveContext()
+        }
+    }
+    
+    func updateEvaluatedStudentScore(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: AnswerTemplate) async throws {
+        try await self.viewContext.perform {
+            let fetchRequest: NSFetchRequest<EvaluatedStudentEntity> = EvaluatedStudentEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", student.id as CVarArg)
             
-            templateEntity.evaluatedStudents.insert(studentEntity)
+            guard let studentEntity = try self.viewContext.fetch(fetchRequest).first else {
+                throw NSError(domain: "UpdateStudentError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Student not found."])
+            }
+            
+            studentEntity.scoreValue = NSDecimalNumber(value: studentScore.totalScore)
 
             try self.saveContext()
         }
@@ -68,7 +87,7 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             }
             
             return answerTemplateEntity.evaluatedStudents.map { studentEntity in
-                EvaluatedStudent(
+                return EvaluatedStudent(
                     id: studentEntity.id ?? UUID(),
                     dni: studentEntity.dni ?? "",
                     name: studentEntity.name ?? "",
@@ -88,13 +107,15 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
                 throw NSError(domain: "ExportError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Template not found."])
             }
             
-            let csvHeader = "DNI,Alumno,Puntuación\n"
+            let csvHeader = "DNI,Alumno,Puntuación,Respuestas\n"
             var csvContent = csvHeader
             
             for studentEntity in templateEntity.evaluatedStudents {
+                let answerMatrixString = self.convertAnswerMatrixToString(studentEntity.answerMatrix)
+                
                 let studentRow = """
-                "\(studentEntity.dni ?? "")","\(studentEntity.name ?? "")","\(String(format: "%.2f", studentEntity.scoreValue?.doubleValue ?? 0.0))"
-                """
+                        "\(studentEntity.dni ?? "")","\(studentEntity.name ?? "")","\(String(format: "%.2f", studentEntity.scoreValue?.doubleValue ?? 0.0))","\(answerMatrixString)"
+                        """
                 csvContent.append("\(studentRow)\n")
             }
             
@@ -138,13 +159,25 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
         }
     }
     
+    private func convertAnswerMatrixToString(_ matrix: [[Bool]]?) -> String {
+        guard let matrix = matrix else { return "" }
+        
+        return matrix.enumerated().map { rowIndex, row in
+            row.enumerated().compactMap { columnIndex, isSelected in
+                isSelected ? String(UnicodeScalar(65 + columnIndex)!) : nil
+            }.joined(separator: ",")
+        }.joined(separator: ";")
+    }
+    
     private func saveContext() throws {
         if viewContext.hasChanges {
             do {
                 try viewContext.save()
+                viewContext.refreshAllObjects() 
             } catch {
                 let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                print("Unresolved error \(nsError), \(nsError.userInfo)")
+                throw nsError
             }
         }
     }

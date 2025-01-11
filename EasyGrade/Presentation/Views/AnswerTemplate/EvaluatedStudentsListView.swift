@@ -20,7 +20,7 @@ struct EvaluatedStudentsListView: View {
             } else {
                 VStack(spacing: 16) {
                     List {
-                        ForEach(viewModel.evaluatedStudents, id: \.self) { student in
+                        ForEach(viewModel.evaluatedStudents, id: \.id) { student in
                             EvaluatedStudentRow(student: student)
                         }
                         .onDelete(perform: deleteStudent)

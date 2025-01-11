@@ -1,158 +1,121 @@
 import SwiftUI
 
+enum RecognitionState {
+    case placeholder
+    case notification
+    case recognizedData
+}
+
 struct RecognitionView: View {
-    @State private var imageTaken: UIImage?
-    @State private var cameraPresented: Bool = true
     @State var template: AnswerTemplate
-    @ObservedObject var viewModel: ExamDataRecognitionViewModel
     @ObservedObject var examCorrectionViewModel: ExamCorrectionViewModel
-    @Environment(\.dismiss) var dismiss
+    @ObservedObject var cameraViewModel: CameraViewModel
+
+    @State private var recognitionState: RecognitionState = .placeholder
+    @State private var recognizedData: ExamData?
     
-    @State var editableStudentName: String = ""
-    @State var editableStudentDNI: String = ""
-    @State var editableStudentAnswers: String = ""
+    @State private var editableStudentName = ""
+    @State private var editableStudentDNI = ""
 
     var body: some View {
-        VStack {
-            if imageTaken == nil {
-                CameraView(image: $imageTaken,
-                           onDismiss: {
-                    dismiss()
-                })
-                .navigationBarBackButtonHidden()
+        ZStack {
+            CameraPreviewView(session: cameraViewModel.session)
                 .ignoresSafeArea()
-            } else {
-                recognizedDataBody()
-            }
+                .onAppear { cameraViewModel.startSession() }
+                .onDisappear { cameraViewModel.stopSession() }
+
+            contentBasedOnState()
         }
-        .onChange(of: imageTaken) {
-            handleNewImage(imageTaken, template)
+        .onChange(of: cameraViewModel.examExtractedData) {
+            handleDataChange(cameraViewModel.examExtractedData)
         }
         .toolbar(.hidden, for: .tabBar)
     }
 
-    private func recognizedDataBody() -> some View {
-        VStack(spacing: 10) {
-            imagePreview
-            Divider()
-            Spacer()
-                    
-            if viewModel.isScanning {
-                MainScanning()
-                Spacer()
-            } else if let errorMessage = viewModel.errorMessage {
-                ErrorView(errorMessage: errorMessage, action: { imageTaken = nil })
-            }
-            else {
-                if let student = viewModel.currentlyRecognizedStudent, let recognizedAnswers = viewModel.recognizedAnswers {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 12) {
-                            ExamCorrectionView(
-                                viewmodel: examCorrectionViewModel,
-                                student: student,
-                                template: template,
-                                studentAnswers: recognizedAnswers
-                            )
-                            
-                            Divider()
-                            
-                            MainText(text: "Datos del alumno",
-                                     textColor: Color("AppPrimaryColor"),
-                                     font: .headline)
-                            .padding(.top)
-                            
-                            MainTextField(
-                                placeholder: "Nombre",
-                                text: $editableStudentName,
-                                autoCapitalize: true,
-                                autoCorrection: true
-                            )
-                            
-                            MainTextField(
-                                placeholder: "DNI",
-                                text: $editableStudentDNI,
-                                autoCapitalize: true,
-                                autoCorrection: false
-                            )
-                            
-                            MainTextField(
-                                placeholder: "Respuestas",
-                                text: $editableStudentAnswers,
-                                autoCapitalize: false,
-                                autoCorrection: false
-                            )
-                        }
-                        .padding()
-                    }
-                    .onAppear {
-                        if let student = viewModel.currentlyRecognizedStudent,
-                           let recognizedAnswers = viewModel.recognizedAnswers {
-                            editableStudentName = student.name
-                            editableStudentDNI = student.dni
-                            editableStudentAnswers = recognizedAnswers
-                        }
-                    }
-                    
-                    MainButton(
-                        title: "Guardar",
-                        action: {
-                            let updatedStudent = EvaluatedStudent(
-                                id: UUID(),
-                                dni: editableStudentDNI,
-                                name: editableStudentName,
-                                score: examCorrectionViewModel.examScore?.totalScore,
-                                answerMatrix: parseAnswers(editableStudentAnswers, template: template)
-                            )
-                            viewModel.saveEvaluatedStudent(evaluatedStudent: updatedStudent, template: template)
-                            editableStudentName = ""
-                            editableStudentDNI = ""
-                            editableStudentAnswers = ""
-                            dismiss()
-                        },
-                        disabled: editableStudentName.isEmpty || editableStudentDNI.isEmpty
-                    )
-                    .padding()
-                    
-                } else if let errorMessage = viewModel.errorMessage {
-                    ErrorView(errorMessage: errorMessage, action: {imageTaken = nil})
-                }
+    @ViewBuilder
+    private func contentBasedOnState() -> some View {
+        switch recognitionState {
+        case .placeholder:
+            placeholderView()
+        case .notification:
+            notificationView()
+        case .recognizedData:
+            if let data = recognizedData {
+                recognizedDataView(data)
             }
         }
-        .navigationTitle(template.name)
     }
 
-    private var imagePreview: some View {
-        HStack {
-            if let imageTaken = imageTaken {
-                Image(uiImage: imageTaken)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 120, height: 120)
-                    .cornerRadius(8)
-                    .shadow(radius: 4)
+    private func placeholderView() -> some View {
+        CameraPlaceholderView()
+            .transition(.opacity.animation(.easeInOut))
+    }
 
-                Spacer()
+    private func notificationView() -> some View {
+        ConfirmationNotification()
+            .transition(.scale(scale: 0.9).combined(with: .opacity).animation(.easeInOut))
+    }
+
+    private func recognizedDataView(_ data: ExamData) -> some View {
+        VStack {
+            if examCorrectionViewModel.isLoading {
+                MainLoading()
+            } else if let examCalification = examCorrectionViewModel.examScore {
+                recognizedDataBody(data, examCalification)
+            }
+        }
+        .onAppear {
+            examCorrectionViewModel.onAppear(studentAnswers: data.answers, template: template)
+        }
+    }
+
+    private func recognizedDataBody(_ data: ExamData, _ examCalification: ExamCorrectionResult) -> some View {
+        ExamCorrectionView(
+            extractedData: data,
+            saveAction: { saveStudentEvaluation(data, examCalification) },
+            template: template,
+            examCalification: examCalification,
+            editableStudentName: $editableStudentName,
+            editableStudentDNI: $editableStudentDNI
+        )
+        .transition(.opacity.animation(.easeInOut))
+    }
+
+    private func handleDataChange(_ newData: ExamData?) {
+        guard let data = newData else { return }
+        recognizedData = data
+
+        withAnimation {
+            recognitionState = .notification
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation {
+                recognitionState = .recognizedData
+                cameraViewModel.stopSession()
             }
         }
     }
-    
-    private func handleNewImage(_ newImage: UIImage?, _ template: AnswerTemplate) {
-        if let newImage = newImage {
-            Task {
-                if let cgImage = newImage.cgImage {
-                    viewModel.recognizeExamData(with: cgImage, template: self.template)
-                } else {
-                    viewModel.errorMessage = "Error: No se pudo procesar la imagen."
-                }
-            }
-        }
+
+    private func saveStudentEvaluation(_ evaluatedStudent: ExamData, _ examCalification: ExamCorrectionResult) {
+        let studentEvaluated = EvaluatedStudent(
+            dni: editableStudentDNI,
+            name: editableStudentName,
+            score: examCalification.totalScore,
+            answerMatrix: parseAnswers(evaluatedStudent.answers, template: template)
+        )
+
+        examCorrectionViewModel.saveEvaluatedStudent(
+            evaluatedStudent: studentEvaluated,
+            template: template
+        )
     }
-    
+
     private func parseAnswers(_ answers: String, template: AnswerTemplate) -> [[Bool]] {
         let options = (0..<template.numberOfAnswersPerQuestion).map { index in
             Character(UnicodeScalar("A".unicodeScalars.first!.value + UInt32(index))!)
         }
-        
+
         return answers.map { char in
             if char == "-" {
                 return Array(repeating: false, count: Int(template.numberOfAnswersPerQuestion))
@@ -161,5 +124,4 @@ struct RecognitionView: View {
             }
         }
     }
-
 }

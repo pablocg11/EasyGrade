@@ -11,7 +11,9 @@ class ListAnswerTemplateFactory {
     }
     
     private func createEditViewModel() -> EditAnswerTemplateViewModel {
-        return EditAnswerTemplateViewModel(updateAnswerTemplateUseCase: createUpdateAnswerTemplateUseCase())
+        return EditAnswerTemplateViewModel(updateAnswerTemplateUseCase: createUpdateAnswerTemplateUseCase(),
+                                           correctExamUseCase: createExamCorrectionUseCase(),
+                                           updateEvaluatedStudentScoreUseCase: createUpdateEvaluatedStudentScoreUseCase())
     }
     
     private func createDeleteViewModel() -> DeleteAnswerTemplateViewModel {
@@ -22,6 +24,14 @@ class ListAnswerTemplateFactory {
         return ListEvaluatedStudentsViewModel(fetchEvaluatedStudentsUseCase: createFetchEvaluatedStudentsUseCase(),
                                               deleteEvaluatedStudentUseCase: createDeleteEvaluatedStudentUseCase(),
                                               exportEvaluatedStudentsFileUseCase: createExportEvaluatedStudentsFileUseCase())
+    }
+    
+    private func createExamCorrectionUseCase() -> CorrectExamUseCaseProtocol {
+        return CorrectExamUseCase(repository: createExamRepository())
+    }
+    
+    private func createUpdateEvaluatedStudentScoreUseCase() -> UpdateEvaluatedStudentScoreUseCase {
+        return UpdateEvaluatedStudentScoreUseCase(repository: createEvaluatedStudentRepository())
     }
     
     private func createFetchEvaluatedStudentsUseCase() -> FetchEvaluatedStudentsUseCase {
@@ -54,6 +64,10 @@ class ListAnswerTemplateFactory {
     
     private func createEvaluatedStudentRepository() -> EvaluatedStudentRepository {
         return EvaluatedStudentRepository()
+    }
+    
+    private func createExamRepository() -> ExamCorrectionRepository {
+        return ExamCorrectionRepository()
     }
 
     private func createRepository() -> AnswerTemplateRepository {

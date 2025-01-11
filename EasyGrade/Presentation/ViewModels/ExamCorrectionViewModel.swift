@@ -3,12 +3,14 @@ import Foundation
 
 class ExamCorrectionViewModel: ObservableObject {
     private let examCorrectionUseCase: CorrectExamUseCase
+    private let saveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCase
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var examScore: ExamCorrectionResult?
     
-    init(examCorrectionUseCase: CorrectExamUseCase) {
+    init(examCorrectionUseCase: CorrectExamUseCase, saveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCase) {
         self.examCorrectionUseCase = examCorrectionUseCase
+        self.saveEvaluatedStudentUseCase = saveEvaluatedStudentUseCase
     }
     
     func onAppear(studentAnswers: String, template: AnswerTemplate) {
@@ -20,6 +22,23 @@ class ExamCorrectionViewModel: ObservableObject {
             do {
                 let examCorrectionResult = try await examCorrectionUseCase.execute(studentAnswers: studentAnswers, template: template)
                 await handleResult(examCorrectionResult: examCorrectionResult)
+            } catch {
+                await handleError(error)
+            }
+        }
+    }
+    
+    func saveEvaluatedStudent(evaluatedStudent: EvaluatedStudent, template: AnswerTemplate) {
+        isLoading = true
+        
+        Task {
+            do {
+                try await self.saveEvaluatedStudentUseCase.execute(student: evaluatedStudent,
+                                                                   template: template)
+                await MainActor.run {
+                    self.isLoading = false
+                    self.errorMessage = nil
+                }
             } catch {
                 await handleError(error)
             }

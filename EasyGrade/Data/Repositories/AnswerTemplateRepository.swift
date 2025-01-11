@@ -146,8 +146,16 @@ class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
                 entity.cancelledQuestions = template.cancelledQuestions
                 entity.correctAnswerMatrix = template.correctAnswerMatrix
                 
-                entity.evaluatedStudents = []
-
+                entity.evaluatedStudents = Set(template.evaluatedStudents.map { student in
+                    let studentEntity = EvaluatedStudentEntity(context: viewContext)
+                    studentEntity.id = student.id
+                    studentEntity.dni = student.dni
+                    studentEntity.name = student.name
+                    studentEntity.scoreValue = NSDecimalNumber(value: student.score ?? 0.0)
+                    studentEntity.answerMatrix = student.answerMatrix
+                    return studentEntity
+                })
+                
                 saveContext()
             }
         } catch {
@@ -156,12 +164,14 @@ class AnswerTemplateRepository: AnswerTemplateRepositoryProtocol {
     }
 
     private func saveContext() {
-        if viewContext.hasChanges {
-            do {
-                try viewContext.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        viewContext.performAndWait {
+            if viewContext.hasChanges {
+                do {
+                    try viewContext.save()
+                    print("Contexto guardado con éxito.")
+                } catch let error as NSError {
+                    print("Error al guardar el contexto: \(error), \(error.userInfo)")
+                }
             }
         }
     }

@@ -15,44 +15,46 @@ struct AnswerTemplateListView: View {
     
     var body: some View {
         NavigationStack {
-            if viewModel.showLoading {
-                MainLoading()
-            }
-            else{
-                VStack {
-                    if viewModel.answerTemplateList.isEmpty {
-                        EmptyListView(description: "Aún no hay plantillas disponibles",
-                                      icon: "checklist")
-                    } else {
-                        VStack(alignment: .leading) {
-                            MainText(text: "Lista de plantillas",
-                                     textColor: Color("AppPrimaryColor"),
-                                     font: .title2)
-                            .padding(.top)
-                            .padding(.horizontal)
-                            
-                            List {
-                                ForEach(viewModel.answerTemplateList, id: \.id) { template in
-                                    NavigationLink(destination: EvaluatedStudentFactory().createView(for: template)){
-                                        AnswerTemplateCard(editViewModel: editViewModel,
-                                                               deleteViewModel: deleteViewModel,
-                                                               listViewModel: viewModel,
-                                                               listEvaluatedStudentsViewModel: listEvaluatedStudentsViewModel,
-                                                               template: template)
+            VStack {
+                if viewModel.showLoading {
+                    MainLoading()
+                }
+                else {
+                    VStack {
+                        if viewModel.answerTemplateList.isEmpty {
+                            EmptyListView(description: "Aún no hay plantillas disponibles",
+                                          icon: "checklist")
+                        } else {
+                            VStack(alignment: .leading) {
+                                MainText(text: "Lista de plantillas",
+                                         textColor: Color("AppPrimaryColor"),
+                                         font: .title2)
+                                .padding(.top)
+                                .padding(.horizontal)
+                                
+                                List {
+                                    ForEach(viewModel.answerTemplateList, id: \.id) { template in
+                                        NavigationLink(destination: EvaluatedStudentFactory().createView(for: template)){
+                                            AnswerTemplateCard(editViewModel: editViewModel,
+                                                                   deleteViewModel: deleteViewModel,
+                                                                   listViewModel: viewModel,
+                                                                   listEvaluatedStudentsViewModel: listEvaluatedStudentsViewModel,
+                                                                   template: template)
+                                        }
                                     }
+                                    .listRowSeparator(.hidden)
                                 }
-                                .listRowSeparator(.hidden)
-                            }
-                            .listStyle(PlainListStyle())
-                            .refreshable {
-                                viewModel.getAllAnswerTemplate()
+                                .listStyle(PlainListStyle())
+                                .refreshable {
+                                    viewModel.onAppear()
+                                }
                             }
                         }
                     }
                 }
-                .onAppear {
-                    viewModel.getAllAnswerTemplate()
-                }
+            }
+            .onAppear {
+                viewModel.onAppear()
             }
         }
     }

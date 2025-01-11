@@ -13,19 +13,29 @@ class ListAnswerTemplateViewModel: ObservableObject {
         self.getAnswerTemplatesUseCase = getAnswerTemplatesUseCase
     }
     
-    func getAllAnswerTemplate() {
-        Task { @MainActor in
-            showLoading = true
-            errorMessage = nil
-            
+    func onAppear() {
+        showLoading = true
+        errorMessage = nil
+        
+        Task {
             do {
                 let templates = try await getAnswerTemplatesUseCase.execute()
-                answerTemplateList = templates
+                await handleResult(templates)
             } catch {
-                errorMessage = "\(error.localizedDescription)"
+                await handleError(error)
             }
-            
-            showLoading = false
         }
+    }
+    
+    @MainActor
+    private func handleResult(_ answerTemplateList: [AnswerTemplate]) {
+        self.showLoading = false
+        self.answerTemplateList = answerTemplateList
+    }
+    
+    @MainActor
+    private func handleError(_ error: Error) {
+        showLoading = false
+        errorMessage = error.localizedDescription
     }
 }

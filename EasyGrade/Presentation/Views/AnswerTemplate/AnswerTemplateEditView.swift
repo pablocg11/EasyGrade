@@ -17,7 +17,9 @@ struct AnswerTemplateEditView: View {
     @State private var cancelledQuestions: [Bool]
     @State private var correctAnswerMatrix: [[Bool]]
     @State private var evaluatedStudents: [EvaluatedStudent] = []
-
+    
+    @State private var showReevaluationAlert: Bool = false
+    
     init(viewModel: EditAnswerTemplateViewModel, template: AnswerTemplate) {
         self.viewModel = viewModel
         self.template = template
@@ -32,10 +34,11 @@ struct AnswerTemplateEditView: View {
         _blankAnswerPenalty = State(initialValue: template.penaltyBlankAnswer)
         _cancelledQuestions = State(initialValue: template.cancelledQuestions)
         _correctAnswerMatrix = State(initialValue: template.correctAnswerMatrix)
+        _evaluatedStudents = State(initialValue: template.evaluatedStudents)
     }
-
+    
     private var isTemplateValid: Bool {
-        return templateName.isEmpty || correctAnswerScore == 0 || wrongAnswerPenalty == 0
+        return templateName.isEmpty || correctAnswerScore <= 0 || wrongAnswerPenalty <= 0
     }
     
     private func adjustCancelledQuestions() {
@@ -43,7 +46,7 @@ struct AnswerTemplateEditView: View {
             cancelledQuestions = Array(repeating: false, count: Int(numberOfQuestions))
         }
     }
-
+    
     private func adjustCorrectAnswerMatrix() {
         if correctAnswerMatrix.count != Int(numberOfQuestions) || correctAnswerMatrix.first?.count != Int(numberOfAnswers) {
             correctAnswerMatrix = Array(repeating: Array(repeating: false, count: Int(numberOfAnswers)), count: Int(numberOfQuestions))
@@ -75,23 +78,23 @@ struct AnswerTemplateEditView: View {
                                      minValue: 1,
                                      maxValue: 100,
                                      selectedValue: Binding(
-                                         get: { numberOfQuestions },
-                                         set: { newValue in
-                                             numberOfQuestions = Int16(newValue)
-                                             adjustCancelledQuestions()
-                                             adjustCorrectAnswerMatrix()
-                                         }
+                                        get: { numberOfQuestions },
+                                        set: { newValue in
+                                            numberOfQuestions = Int16(newValue)
+                                            adjustCancelledQuestions()
+                                            adjustCorrectAnswerMatrix()
+                                        }
                                      ))
                     
                     MainNumberPicker(placeholder: "Número de respuestas",
                                      minValue: 2,
                                      maxValue: 8,
                                      selectedValue: Binding(
-                                         get: { numberOfAnswers },
-                                         set: { newValue in
-                                             numberOfAnswers = Int16(newValue)
-                                             adjustCorrectAnswerMatrix()
-                                         }
+                                        get: { numberOfAnswers },
+                                        set: { newValue in
+                                            numberOfAnswers = Int16(newValue)
+                                            adjustCorrectAnswerMatrix()
+                                        }
                                      ))
                     
                     MainToggle(placeholder: "¿Más de una respuesta correcta?",
@@ -123,18 +126,32 @@ struct AnswerTemplateEditView: View {
                 
                 Spacer()
             }
-            .onChange(of: viewModel.showLoading) { 
+            .onChange(of: viewModel.showLoading) {
                 if viewModel.errorMessage == nil {
                     presentationMode.wrappedValue.dismiss()
                 }
             }
-            MainButton(title: "Guardar", action: saveTemplate, disabled: isTemplateValid || !hasValidCorrectAnswers)
+            MainButton(title: "Guardar", action: {
+                saveTemplate()
+            }, disabled: isTemplateValid || !hasValidCorrectAnswers)
         }
         .padding()
         .navigationTitle("Edición de plantilla")
     }
-
+    
+    private func hasCorrectionChanges() -> Bool {
+        return numberOfQuestions != template.numberOfQuestions ||
+               numberOfAnswers != template.numberOfAnswersPerQuestion ||
+               moreThanOneAnswer != template.multipleCorrectAnswers ||
+               correctAnswerScore != template.scoreCorrectAnswer ||
+               wrongAnswerPenalty != template.penaltyIncorrectAnswer ||
+               blankAnswerPenalty != template.penaltyBlankAnswer ||
+               cancelledQuestions != template.cancelledQuestions ||
+               correctAnswerMatrix != template.correctAnswerMatrix
+    }
+    
     private func saveTemplate() {
+        
         let updatedTemplate = AnswerTemplate(
             id: template.id,
             name: templateName,
@@ -147,8 +164,11 @@ struct AnswerTemplateEditView: View {
             penaltyBlankAnswer: blankAnswerPenalty,
             cancelledQuestions: cancelledQuestions,
             correctAnswerMatrix: correctAnswerMatrix,
-            evaluatedStudents: evaluatedStudents
+            evaluatedStudents: hasCorrectionChanges() ? [] : template.evaluatedStudents
         )
-        viewModel.updateAnswerTemplate(template: updatedTemplate)
+        Task {
+            await viewModel.updateAnswerTemplate(template: updatedTemplate)
+        }
     }
 }
+    

@@ -3,18 +3,18 @@ import Foundation
 import Vision
 
 protocol RecognizeExamDataUseCaseProtocol {
-    func execute(image: CGImage, template: AnswerTemplate) async throws -> Result<(name: String?, dni: String?, recognizedAnswers: String?), Error>
+    func execute(_ rawText: String) throws -> ExamData?
 }
 
 class RecognizeExamDataUseCase: RecognizeExamDataUseCaseProtocol {
-    private let repository: ExamRecognitionRepository
-
-    init(repository: ExamRecognitionRepository) {
-        self.repository = repository
+    private let processor: ExamDataProcessorProtocol
+    
+    init(processor: ExamDataProcessorProtocol) {
+        self.processor = processor
     }
 
-    func execute(image: CGImage, template: AnswerTemplate) async throws -> Result<(name: String?, dni: String?, recognizedAnswers: String?), Error> {
-        return try await repository.recognizeExamData(from: image, template: template)
+    func execute(_ rawText: String) throws -> ExamData? {
+        return try self.processor.processExamData(rawText)
     }
 }
 

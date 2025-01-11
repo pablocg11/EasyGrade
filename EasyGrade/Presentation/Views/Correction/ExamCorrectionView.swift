@@ -1,77 +1,106 @@
+//
+//  RecognizedExamaDataView.swift
+//  EasyGrade
+//
+//  Created by Pablo Castro on 10/1/25.
+//
 
 import SwiftUI
 
 struct ExamCorrectionView: View {
-    @ObservedObject var viewmodel: ExamCorrectionViewModel
-    @State var student: EvaluatedStudent
-    @State var template: AnswerTemplate
-    @State var studentAnswers: String
+    @State var extractedData: ExamData
+    let saveAction: () -> Void
+    let template: AnswerTemplate
+    let examCalification: ExamCorrectionResult
+    @Environment(\.dismiss) var dismiss
     
-    init(viewmodel: ExamCorrectionViewModel, student: EvaluatedStudent, template: AnswerTemplate, studentAnswers: String) {
-        self.viewmodel = viewmodel
-        self._student = State(initialValue: student)
-        self._template = State(initialValue: template)
-        self._studentAnswers = State(initialValue: studentAnswers)
-    }
+    @Binding var editableStudentName: String
+    @Binding var editableStudentDNI: String
     
     var body: some View {
-        VStack(alignment: .leading) {
-            if let examCorrectionResult = viewmodel.examScore {
-                
-                MainText(text: "Puntuación del alumno",
-                         textColor: Color("AppPrimaryColor"),
-                         font: .headline)
-                
-                HStack {
-                    CorrectionProgressView(progress: examCorrectionResult.totalScore, limit: 10.0)                        .frame(maxWidth: .infinity, alignment: .center)
+        VStack {
+                ScrollView {
+                    MainText(text: "Datos del alumno",
+                             textColor: Color("AppPrimaryColor"),
+                             font: .headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top)
+                    
+                    MainTextField(
+                        placeholder: "Nombre",
+                        text: $editableStudentName,
+                        autoCapitalize: true,
+                        autoCorrection: true
+                    )
+
+                    MainTextField(
+                        placeholder: "DNI",
+                        text: $editableStudentDNI,
+                        autoCapitalize: true,
+                        autoCorrection: false
+                    )
+                    
+                    MainTextField(
+                        placeholder: "Respuestas",
+                        text: $extractedData.answers,
+                        autoCapitalize: false,
+                        autoCorrection: false
+                    )
+                    
+                    Divider()
+                        .padding(.vertical)
                     
                     VStack {
-                        HStack {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                            Text("\(examCorrectionResult.correctAnswers.count)")
-                                .font(.headline)
-                        }
-                            
-                        HStack {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.red)
-                            Text("\(examCorrectionResult.incorrectAnswers.count)")
-                                .font(.headline)
-                        }
-
-                        HStack {
-                            Image(systemName: "square.dashed")
-                                .foregroundColor(.gray)
-                            Text("\(examCorrectionResult.blankAnswers.count)")
-                                .font(.headline)
-                        }
+                        MainText(text: "Resultados de la correción",
+                                 textColor: Color("AppPrimaryColor"),
+                                 font: .headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         
                         HStack {
-                            Image(systemName: "nosign")
-                                .foregroundColor(.red)
-                            Text("\(examCorrectionResult.cancelledQuestions.count)")
-                                .font(.headline)
+                            CorrectionProgressView(progress: examCalification.totalScore, limit: 10)
+                            
+                            VStack(spacing: 10) {
+                                MainText(text: "✅ \(examCalification.correctAnswers.count)",
+                                         textColor: .primary,
+                                         font: .callout,
+                                         fontWeight: .bold)
+                                
+                                MainText(text: "❌ \(examCalification.incorrectAnswers.count)",
+                                         textColor: .primary,
+                                         font: .callout,
+                                         fontWeight: .bold)
+                                
+                                MainText(text:"➖ \(examCalification.blankAnswers.count)",
+                                         textColor: .primary,
+                                         font: .callout,
+                                         fontWeight: .bold)
+
+                            }
                         }
                     }
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .center)
-                .background(Color("AppSecondaryColor"))
-                .cornerRadius(10)
-
-            } else if viewmodel.isLoading {
-                MainLoading()
-            } else if let errorMessage = viewmodel.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .multilineTextAlignment(.center)
                     .padding()
-            }
+                    .background(Color("AppSecondaryColor"))
+                    .cornerRadius(10)
+                }
+                .scrollIndicators(.hidden)
+                .padding()
+            
+            MainButton(
+                title: "Guardar",
+                action: {
+                    saveAction()
+                    dismiss()
+                },
+                disabled: false
+            )
+            .padding()
         }
-        .padding(.vertical)
         .onAppear {
-            viewmodel.onAppear(studentAnswers: studentAnswers, template: template)
+            self.editableStudentName = extractedData.name
+            self.editableStudentDNI = extractedData.dni
         }
+        .navigationTitle(template.name)
+        .transition(.opacity.animation(.easeInOut))
+        .background(Color.white)
     }
 }

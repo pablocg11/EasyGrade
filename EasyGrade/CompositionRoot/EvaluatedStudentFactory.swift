@@ -5,17 +5,17 @@ class EvaluatedStudentFactory {
     
     func createView(for template: AnswerTemplate) -> RecognitionView {
         return RecognitionView(template: template,
-                               viewModel: createViewModel(),
-                               examCorrectionViewModel: createExamCorrectionViewModel())
-    }
-    
-    private func createViewModel() -> ExamDataRecognitionViewModel {
-        return ExamDataRecognitionViewModel(recognizeExamDataUseCase: createRecognizeTextUseCase(),
-                                            saveEvaluatedStudentUseCase: createSaveEvaluatedStudentUseCase())
+                               examCorrectionViewModel: createExamCorrectionViewModel(),
+                               cameraViewModel: createCameraViewModel())
     }
     
     private func createExamCorrectionViewModel() -> ExamCorrectionViewModel {
-        return ExamCorrectionViewModel(examCorrectionUseCase: createExamCorrectionUseCase())
+        return ExamCorrectionViewModel(examCorrectionUseCase: createExamCorrectionUseCase(),
+                                       saveEvaluatedStudentUseCase: createSaveEvaluatedStudentUseCase())
+    }
+    
+    private func createCameraViewModel() -> CameraViewModel {
+        return CameraViewModel(recognizeExamDataUseCase: createRecognizeExamDataUseCase())
     }
     
     private func createExamCorrectionUseCase() -> CorrectExamUseCase {
@@ -34,11 +34,7 @@ class EvaluatedStudentFactory {
         return EvaluatedStudentRepository()
     }
     
-    private func createRecognizeTextUseCase() -> RecognizeExamDataUseCase {
-        return RecognizeExamDataUseCase(repository: createTextRecognitionRepository())
-    }
-    
-    private func createTextRecognitionRepository() -> ExamRecognitionRepository {
-        return ExamRecognitionRepository()
+    private func createRecognizeExamDataUseCase() -> RecognizeExamDataUseCase {
+        return RecognizeExamDataUseCase(processor: ExamDataProcessor())
     }
 }

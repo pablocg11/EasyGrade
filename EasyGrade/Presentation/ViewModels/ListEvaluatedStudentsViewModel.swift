@@ -24,9 +24,9 @@ class ListEvaluatedStudentsViewModel: ObservableObject {
         
         Task {
             do {
-                let evaluatedStudents = try await fetchEvaluatedStudentsUseCase.execute(template: template)
+                let evaluatedStudentsResult = try await fetchEvaluatedStudentsUseCase.execute(template: template)
                 await MainActor.run {
-                    self.evaluatedStudents = evaluatedStudents
+                    self.evaluatedStudents = evaluatedStudentsResult
                     self.isLoading = false
                 }
             } catch {
