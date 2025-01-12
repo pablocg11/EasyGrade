@@ -16,6 +16,8 @@ struct RecognitionView: View {
     
     @State private var editableStudentName = ""
     @State private var editableStudentDNI = ""
+    
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         ZStack {
@@ -52,8 +54,12 @@ struct RecognitionView: View {
     }
 
     private func notificationView() -> some View {
-        ConfirmationNotification()
-            .transition(.scale(scale: 0.9).combined(with: .opacity).animation(.easeInOut))
+        ConfirmationNotification(
+            titleNotification: examCorrectionViewModel.errorMessage != nil ? "Error" : "Examen escaneado",
+            messageNotification: examCorrectionViewModel.errorMessage != nil ? "El número de respuestas no coincide con el número de preguntas" : "El examen ha sido procesado correctamente",
+            error: examCorrectionViewModel.errorMessage != nil ? true : false
+        )
+        .transition(.scale(scale: 0.9).combined(with: .opacity).animation(.easeInOut))
     }
 
     private func recognizedDataView(_ data: ExamData) -> some View {
@@ -85,14 +91,20 @@ struct RecognitionView: View {
         guard let data = newData else { return }
         recognizedData = data
 
+        examCorrectionViewModel.onAppear(studentAnswers: data.answers, template: template)
+
         withAnimation {
             recognitionState = .notification
+            cameraViewModel.stopSession()
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            withAnimation {
-                recognitionState = .recognizedData
-                cameraViewModel.stopSession()
+            if let _ = examCorrectionViewModel.errorMessage {
+                dismiss()
+            } else {
+                withAnimation {
+                    recognitionState = .recognizedData
+                }
             }
         }
     }

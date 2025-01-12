@@ -16,6 +16,8 @@ struct CreateAnswerTemplateView: View {
     @State private var cancelledQuestions: [Bool] = Array(repeating: false, count: 10)
     @State private var correctAnswerMatrix: [[Bool]] = Array(repeating: Array(repeating: false, count: 4), count: 10)
     
+    @State private var showNotification: Bool = false
+    
     private var isTemplateValid: Bool {
         return templateName.isEmpty || correctAnswerScore <= 0 || wrongAnswerPenalty < 0 || blankAnswerPenalty < 0
     }
@@ -26,25 +28,48 @@ struct CreateAnswerTemplateView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 20) {
-                MainText(text: "Crear plantilla",
-                         textColor: Color("AppPrimaryColor"),
-                         font: .title2)
-                
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 15) {
-                        templateInfoSection
-                        configurationSection
-                        navigationLinks
+            ZStack {
+                VStack(alignment: .leading, spacing: 20) {
+                    MainText(text: "Crear plantilla",
+                             textColor: Color("AppPrimaryColor"),
+                             font: .title2)
+                    
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 15) {
+                            templateInfoSection
+                            configurationSection
+                            navigationLinks
+                        }
                     }
+                    
+                    MainButton(title: "Guardar", action: {
+                        saveTemplate()
+                        showNotification = true
+                    }
+                               , disabled: isTemplateValid || !hasValidCorrectAnswers)
                 }
+                .padding()
+                .onChange(of: numberOfQuestions) { adjustFields() }
+                .onChange(of: numberOfAnswers) { adjustFields() }
                 
-                MainButton(title: "Guardar", action: saveTemplate, disabled: isTemplateValid || !hasValidCorrectAnswers)
+                if showNotification {
+                    notificationView()
+                        .zIndex(1)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation {
+                                    showNotification = false 
+                                }
+                            }
+                        }
+                }
             }
-            .padding()
-            .onChange(of: numberOfQuestions) { adjustFields() }
-            .onChange(of: numberOfAnswers) { adjustFields() }
         }
+    }
+    
+    private func notificationView() -> some View {
+        ConfirmationNotification(titleNotification: "Plantilla creada", messageNotification: "La plantilla ha sido creada exitosamente", error: false)
+            .transition(.scale(scale: 0.9).combined(with: .opacity).animation(.easeInOut))
     }
 }
 

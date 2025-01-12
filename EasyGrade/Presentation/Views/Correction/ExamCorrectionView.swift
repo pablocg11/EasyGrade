@@ -49,7 +49,7 @@ struct ExamCorrectionView: View {
                     
                     Divider()
                         .padding(.vertical)
-                    
+                                        
                     VStack {
                         MainText(text: "Resultados de la correción",
                                  textColor: Color("AppPrimaryColor"),

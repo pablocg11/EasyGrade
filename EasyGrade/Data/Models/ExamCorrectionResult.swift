@@ -7,4 +7,5 @@ struct ExamCorrectionResult {
     let incorrectAnswers: [Int]
     let blankAnswers: [Int]
     let cancelledQuestions: [Int]
+    let areAnswersValid: Bool
 }

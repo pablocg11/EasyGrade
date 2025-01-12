@@ -8,6 +8,9 @@ protocol ExamCorrectionRepositoryProtocol {
 class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
     
     func correctExam(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult {
+        let numberOfQuestions = template.correctAnswerMatrix.count
+        let areAnswersValid = studentAnswers.count == numberOfQuestions
+        
         var totalScore = 0.0
         var correctAnswers = [Int]()
         var incorrectAnswers = [Int]()
@@ -52,7 +55,8 @@ class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
             correctAnswers: correctAnswers,
             incorrectAnswers: incorrectAnswers,
             blankAnswers: blankAnswers,
-            cancelledQuestions: cancelledQuestions
+            cancelledQuestions: cancelledQuestions,
+            areAnswersValid: areAnswersValid
         )
     }
 }

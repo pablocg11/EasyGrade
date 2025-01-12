@@ -111,24 +111,24 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             var csvContent = csvHeader
             
             for studentEntity in templateEntity.evaluatedStudents {
-                let answerMatrixString = self.convertAnswerMatrixToString(studentEntity.answerMatrix)
+                let answerMatrixString = self.convertAnswerMatrixToString(studentEntity.answerMatrix )
                 
                 let studentRow = """
-                        "\(studentEntity.dni ?? "")","\(studentEntity.name ?? "")","\(String(format: "%.2f", studentEntity.scoreValue?.doubleValue ?? 0.0))","\(answerMatrixString)"
-                        """
+                "\(studentEntity.dni ?? "")","\(studentEntity.name ?? "")","\(String(format: "%.2f", studentEntity.scoreValue?.doubleValue ?? 0.0))","\(answerMatrixString)"
+                """
                 csvContent.append("\(studentRow)\n")
             }
             
             let rawFileName = templateEntity.name ?? "EvaluatedStudents"
             let sanitizedFileName = rawFileName.replacingOccurrences(of: "/", with: "_")
-                                       .replacingOccurrences(of: "\\", with: "_")
-                                       .replacingOccurrences(of: ":", with: "_")
-                                       .replacingOccurrences(of: "*", with: "_")
-                                       .replacingOccurrences(of: "?", with: "_")
-                                       .replacingOccurrences(of: "\"", with: "_")
-                                       .replacingOccurrences(of: "<", with: "_")
-                                       .replacingOccurrences(of: ">", with: "_")
-                                       .replacingOccurrences(of: "|", with: "_")
+                .replacingOccurrences(of: "\\", with: "_")
+                .replacingOccurrences(of: ":", with: "_")
+                .replacingOccurrences(of: "*", with: "_")
+                .replacingOccurrences(of: "?", with: "_")
+                .replacingOccurrences(of: "\"", with: "_")
+                .replacingOccurrences(of: "<", with: "_")
+                .replacingOccurrences(of: ">", with: "_")
+                .replacingOccurrences(of: "|", with: "_")
             
             let tempDirectory = FileManager.default.temporaryDirectory
             let fileURL = tempDirectory.appendingPathComponent("\(sanitizedFileName).csv")
@@ -144,6 +144,21 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             }
         }
     }
+
+    private func convertAnswerMatrixToString(_ answerMatrix: [[Bool]]?) -> String {
+        guard let matrix = answerMatrix else {
+            return ""
+        }
+        
+        var result = [String]()
+        for (questionIndex, answers) in matrix.enumerated() {
+            if let answerIndex = answers.firstIndex(of: true) {
+                let answerLetter = String(UnicodeScalar(65 + answerIndex)!)
+                result.append("\(questionIndex + 1)\(answerLetter)")
+            }
+        }
+        return result.joined(separator: " ")
+    }
     
     func shareCSV(fileURL: URL) {
         DispatchQueue.main.async {
@@ -157,16 +172,6 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             activityVC.popoverPresentationController?.sourceView = rootViewController.view
             rootViewController.present(activityVC, animated: true, completion: nil)
         }
-    }
-    
-    private func convertAnswerMatrixToString(_ matrix: [[Bool]]?) -> String {
-        guard let matrix = matrix else { return "" }
-        
-        return matrix.enumerated().map { rowIndex, row in
-            row.enumerated().compactMap { columnIndex, isSelected in
-                isSelected ? String(UnicodeScalar(65 + columnIndex)!) : nil
-            }.joined(separator: ",")
-        }.joined(separator: ";")
     }
     
     private func saveContext() throws {

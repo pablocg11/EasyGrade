@@ -21,7 +21,14 @@ class ExamCorrectionViewModel: ObservableObject {
         Task {
             do {
                 let examCorrectionResult = try await examCorrectionUseCase.execute(studentAnswers: studentAnswers, template: template)
-                await handleResult(examCorrectionResult: examCorrectionResult)
+                await MainActor.run {
+                    if !examCorrectionResult.areAnswersValid {
+                        self.errorMessage = "El número de respuestas no coincide con el número de preguntas."
+                        self.isLoading = false
+                    } else {
+                        self.handleResult(examCorrectionResult: examCorrectionResult)
+                    }
+                }
             } catch {
                 await handleError(error)
             }
