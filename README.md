@@ -19,7 +19,7 @@ This application allows you to create, edit, delete, and list exam templates, as
 - **List Templates**: Browse and select from a comprehensive list of your templates.
 
 📸 **Student Answer Recognition**
-- Use the device camera to capture an image of a student's exam.
+- Utilize the device camera for live recognition of a student’s exam.
 - Recognize and extract the student’s information (name, ID) and their answers using text recognition.
 
 📊 **Exam Correction**
