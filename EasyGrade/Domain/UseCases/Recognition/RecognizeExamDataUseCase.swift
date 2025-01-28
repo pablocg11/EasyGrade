@@ -7,14 +7,14 @@ protocol RecognizeExamDataUseCaseProtocol {
 }
 
 class RecognizeExamDataUseCase: RecognizeExamDataUseCaseProtocol {
-    private let processor: ExamDataProcessorProtocol
+    private let service: ExamDataProcessingServiceProtocol
     
-    init(processor: ExamDataProcessorProtocol) {
-        self.processor = processor
+    init(service: ExamDataProcessingServiceProtocol) {
+        self.service = service
     }
 
     func execute(_ rawText: String) throws -> ExamData? {
-        return try self.processor.processExamData(rawText)
+        return try self.service.processExamData(rawText)
     }
 }
 

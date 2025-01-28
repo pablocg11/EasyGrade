@@ -2,23 +2,23 @@
 import Foundation
 
 class ListEvaluatedStudentsViewModel: ObservableObject {
-    private let fetchEvaluatedStudentsUseCase: FetchEvaluatedStudentsUseCase
-    private let deleteEvaluatedStudentUseCase: DeleteEvaluatedStudentUseCase
-    private let exportEvaluatedStudentsFileUseCase: ExportEvaluatedStudentsFileUseCase
+    private let fetchEvaluatedStudentsUseCase: FetchEvaluatedStudentsUseCaseProtocol
+    private let deleteEvaluatedStudentUseCase: DeleteEvaluatedStudentUseCaseProtocol
+    private let exportEvaluatedStudentsFileUseCase: ExportEvaluatedStudentsFileUseCaseProtocol
     
     @Published var errorMessage: String?
     @Published var evaluatedStudents: [EvaluatedStudent] = []
     @Published var isLoading: Bool = false
     
-    init(fetchEvaluatedStudentsUseCase: FetchEvaluatedStudentsUseCase,
-         deleteEvaluatedStudentUseCase: DeleteEvaluatedStudentUseCase,
-         exportEvaluatedStudentsFileUseCase: ExportEvaluatedStudentsFileUseCase) {
+    init(fetchEvaluatedStudentsUseCase: FetchEvaluatedStudentsUseCaseProtocol,
+         deleteEvaluatedStudentUseCase: DeleteEvaluatedStudentUseCaseProtocol,
+         exportEvaluatedStudentsFileUseCase: ExportEvaluatedStudentsFileUseCaseProtocol) {
         self.fetchEvaluatedStudentsUseCase = fetchEvaluatedStudentsUseCase
         self.deleteEvaluatedStudentUseCase = deleteEvaluatedStudentUseCase
         self.exportEvaluatedStudentsFileUseCase = exportEvaluatedStudentsFileUseCase
     }
     
-    func onAppear(template: AnswerTemplate) {
+    func onAppear(template: ExamTemplate) {
         isLoading = true
         errorMessage = nil
         
@@ -38,7 +38,7 @@ class ListEvaluatedStudentsViewModel: ObservableObject {
         }
     }
     
-    func exportEvaluatedStudents(template: AnswerTemplate) {
+    func exportEvaluatedStudents(template: ExamTemplate) {
         isLoading = true
         errorMessage = nil
         
@@ -57,7 +57,7 @@ class ListEvaluatedStudentsViewModel: ObservableObject {
         }
     }
     
-    func deleteEvaluatedStudent(evaluatedStudent: EvaluatedStudent, template: AnswerTemplate) {
+    func deleteEvaluatedStudent(evaluatedStudent: EvaluatedStudent, template: ExamTemplate) {
         isLoading = true
         errorMessage = nil
         

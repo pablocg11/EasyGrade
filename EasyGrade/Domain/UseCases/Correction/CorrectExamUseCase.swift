@@ -2,17 +2,17 @@
 import Foundation
 
 protocol CorrectExamUseCaseProtocol {
-    func execute(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult
+    func execute(studentAnswers: String, template: ExamTemplate) async throws -> ExamCorrectionResult
 }
 
 class CorrectExamUseCase: CorrectExamUseCaseProtocol {
-    private let repository: ExamCorrectionRepository
+    private let service: ExamCorrectionServiceProtocol
     
-    init(repository: ExamCorrectionRepository) {
-        self.repository = repository
+    init(service: ExamCorrectionServiceProtocol) {
+        self.service = service
     }
     
-    func execute(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult {
-        try await repository.correctExam(studentAnswers: studentAnswers, template: template)
+    func execute(studentAnswers: String, template: ExamTemplate) async throws -> ExamCorrectionResult {
+        try await service.correctExam(studentAnswers: studentAnswers, template: template)
     }
 }

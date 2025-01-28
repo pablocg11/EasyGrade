@@ -6,7 +6,6 @@ struct CorrectAnswersView: View {
     @Binding var correctAnswerMatrix: [[Bool]]
     @Binding var numberOfQuestions: Int16
     @Binding var numberOfAnswers: Int16
-    @Binding var moreThanOneAnswer: Bool
     
     func letterForIndex(_ index: Int) -> String {
         let letters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -21,20 +20,18 @@ struct CorrectAnswersView: View {
                     MainText(text: "Pregunta \(questionIndex + 1)",
                              textColor: Color("AppPrimaryColor"),
                              font: .callout)
-                        ForEach(0..<Int(numberOfAnswers), id: \.self) { answerIndex in
-                            MainRadioButton(option: "Respuesta \(letterForIndex(answerIndex))",
-                                            isSelected: Binding<Bool>(
-                                                get: { correctAnswerMatrix[questionIndex][answerIndex] },
-                                                set: { newValue in
-                                                    if moreThanOneAnswer {
-                                                        correctAnswerMatrix[questionIndex][answerIndex] = newValue
-                                                    } else {
-                                                        for index in 0..<Int(numberOfAnswers) {
-                                                            correctAnswerMatrix[questionIndex][index] = (index == answerIndex) ? newValue : false
-                                                        }
-                                                    }
+                    ForEach(0..<Int(numberOfAnswers), id: \.self) { answerIndex in
+                        MainRadioButton(option: "Respuesta \(letterForIndex(answerIndex))",
+                                        isSelected: Binding<Bool>(
+                                            get: { correctAnswerMatrix[questionIndex][answerIndex] },
+                                            set: { newValue in
+                                                for index in 0..<Int(numberOfAnswers) {
+                                                    correctAnswerMatrix[questionIndex][index] = false
                                                 }
-                                            ))
+                                                
+                                                correctAnswerMatrix[questionIndex][answerIndex] = newValue
+                                            }
+                                        ))
                         
                     }
                 }

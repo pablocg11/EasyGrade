@@ -1,18 +1,18 @@
 
 import Foundation
 
-protocol GetAnswerTemplatesUseCaseType {
-    func execute() async throws -> [AnswerTemplate]
+protocol GetExamTemplatesUseCaseProtocol {
+    func execute() async throws -> [ExamTemplate]
 }
 
-class GetAnswerTemplatesUseCase: GetAnswerTemplatesUseCaseType {
-    private let repository: AnswerTemplateRepository
+class GetExamTemplatesUseCase: GetExamTemplatesUseCaseProtocol {
+    private let repository: ExamTemplateRepositoryProtocol
 
-    init(answerTemplateRepository: AnswerTemplateRepository) {
-        self.repository = answerTemplateRepository
+    init(ExamTemplateRepository: ExamTemplateRepositoryProtocol) {
+        self.repository = ExamTemplateRepository
     }
 
-    func execute() -> [AnswerTemplate] {
+    func execute() -> [ExamTemplate] {
         return repository.getAllTemplates()
     }
 }

@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24B83" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
-    <entity name="AnswerTemplateEntity" representedClassName="AnswerTemplateEntity" syncable="YES">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24B83" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="EvaluatedStudentEntity" representedClassName="EvaluatedStudentEntity" syncable="YES">
+        <attribute name="answerMatrix" optional="YES" attributeType="Transformable" valueTransformerName="BoolMatrixTransformer"/>
+        <attribute name="dni" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="scoreValue" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+    </entity>
+    <entity name="ExamTemplateEntity" representedClassName="ExamTemplateEntity" syncable="YES">
         <attribute name="cancelledQuestions" optional="YES" attributeType="Transformable" valueTransformerName="BoolArrayTransformer"/>
         <attribute name="correctAnswerMatrix" optional="YES" attributeType="Transformable" valueTransformerName="BoolMatrixTransformer"/>
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="multipleCorrectAnswers" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="numberOfAnswersPerQuestion" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="numberOfQuestions" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -13,12 +19,5 @@
         <attribute name="penaltyIncorrectAnswer" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="scoreCorrectAnswer" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="evaluatedStudents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EvaluatedStudentEntity"/>
-    </entity>
-    <entity name="EvaluatedStudentEntity" representedClassName="EvaluatedStudentEntity" syncable="YES">
-        <attribute name="answerMatrix" optional="YES" attributeType="Transformable" valueTransformerName="BoolMatrixTransformer"/>
-        <attribute name="dni" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="scoreValue" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
     </entity>
 </model>

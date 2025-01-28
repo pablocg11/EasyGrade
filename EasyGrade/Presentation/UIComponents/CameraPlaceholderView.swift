@@ -16,24 +16,25 @@ struct CameraPlaceholderView: View {
                     RoundedRectangle(cornerRadius: 15)
                         .fill(Color.gray.opacity(0.2))
                 )
-                .padding()
-                .padding(.vertical, 50)
+                .padding(10)
             VStack(spacing: 100) {
                 MainText(
-                    text: "Coloque el examen aquí",
+                    text: "Coloque la información a escanear aquí",
                     font: .title3,
-                    fontWeight: .semibold
+                    fontWeight: .semibold,
+                    textAlignment: .center
                 )
                 MainText(
-                    text: "Asegúrese de que el examen esté completamente visible y dentro del marco",
+                    text: "Asegúrese de que el contenido esté completamente visible y dentro del marco",
+                    textColor: .white,
                     font: .footnote,
                     fontWeight: .regular,
                     textAlignment: .center
                 )
-                .padding()
             }
-            .padding()
+            .padding(30)
         }
+        .frame(maxHeight: 300)
     }
 }
 

@@ -1,17 +1,17 @@
 
 import Foundation
 
-class CreateAnswerTemplateViewModel: ObservableObject {
-    private let createAnswerTemplateUseCase: CreateAnswerTemplateUseCaseType
+class CreateExamTemplateViewModel: ObservableObject {
+    private let createExamTemplateUseCase: CreateExamTemplateUseCaseProtocol
     
     @Published var showLoading: Bool = false
     @Published var errorMessage: String?
     
-    init(createAnswerTemplateUseCase: CreateAnswerTemplateUseCaseType) {
-        self.createAnswerTemplateUseCase = createAnswerTemplateUseCase
+    init(createExamTemplateUseCase: CreateExamTemplateUseCaseProtocol) {
+        self.createExamTemplateUseCase = createExamTemplateUseCase
     }
     
-    func createAnswerTemplate(name: String,
+    func createExamTemplate(name: String,
                               date: Date,
                               numberOfQuestions: Int16,
                               numberOfAnswersPerQuestion: Int16,
@@ -27,13 +27,12 @@ class CreateAnswerTemplateViewModel: ObservableObject {
             errorMessage = nil
             
             do {
-                let template = AnswerTemplate(
+                let template = ExamTemplate(
                     id: UUID(),
                     name: name,
                     date: date,
                     numberOfQuestions: numberOfQuestions,
                     numberOfAnswersPerQuestion: numberOfAnswersPerQuestion,
-                    multipleCorrectAnswers: multipleCorrectAnswers,
                     scoreCorrectAnswer: scoreCorrectAnswer,
                     penaltyIncorrectAnswer: penaltyIncorrectAnswer,
                     penaltyBlankAnswer: penaltyBlankAnswer,
@@ -41,7 +40,7 @@ class CreateAnswerTemplateViewModel: ObservableObject {
                     correctAnswerMatrix: correctAnswerMatrix,
                     evaluatedStudents: []
                 )
-                try await createAnswerTemplateUseCase.execute(template: template)
+                try await createExamTemplateUseCase.execute(template: template)
             } catch {
                 errorMessage = "\(error.localizedDescription)"
             }

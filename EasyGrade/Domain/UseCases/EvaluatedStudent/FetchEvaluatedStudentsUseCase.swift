@@ -2,17 +2,17 @@
 import Foundation
 
 protocol FetchEvaluatedStudentsUseCaseProtocol {
-    func execute(template: AnswerTemplate) async throws -> [EvaluatedStudent]
+    func execute(template: ExamTemplate) async throws -> [EvaluatedStudent]
 }
 
 class FetchEvaluatedStudentsUseCase: FetchEvaluatedStudentsUseCaseProtocol {
-    private let repository: EvaluatedStudentRepository
+    private let repository: EvaluatedStudentRepositoryProtocol
     
-    init(repository: EvaluatedStudentRepository) {
+    init(repository: EvaluatedStudentRepositoryProtocol) {
         self.repository = repository
     }
     
-    func execute(template: AnswerTemplate) async throws -> [EvaluatedStudent] {
+    func execute(template: ExamTemplate) async throws -> [EvaluatedStudent] {
         return try await repository.fetchAllStudentsFromTemplate(template: template)
     }
 }

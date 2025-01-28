@@ -1,22 +1,22 @@
 
 import Foundation
 
-class CreateAnswerTemplateFactory {
+class CreateExamTemplateFactory {
     
-    func createView() -> CreateAnswerTemplateView {
-        return CreateAnswerTemplateView(viewModel: createViewModel())
+    func createView() -> CreateExamTemplateView {
+        return CreateExamTemplateView(viewModel: createViewModel())
     }
     
-    private func createViewModel() -> CreateAnswerTemplateViewModel {
-        return CreateAnswerTemplateViewModel(createAnswerTemplateUseCase: createCreateAnswerTemplateUseCase())
+    private func createViewModel() -> CreateExamTemplateViewModel {
+        return CreateExamTemplateViewModel(createExamTemplateUseCase: createCreateExamTemplateUseCase())
     }
     
-    private func createCreateAnswerTemplateUseCase() -> CreateAnswerTemplateUseCase {
-        return CreateAnswerTemplateUseCase(answerTemplateRepository: createRepository())
+    private func createCreateExamTemplateUseCase() -> CreateExamTemplateUseCase {
+        return CreateExamTemplateUseCase(ExamTemplateRepository: createRepository())
     }
 
-    private func createRepository() -> AnswerTemplateRepository {
-        return AnswerTemplateRepository()
+    private func createRepository() -> ExamTemplateRepository {
+        return ExamTemplateRepository()
     }
     
 }

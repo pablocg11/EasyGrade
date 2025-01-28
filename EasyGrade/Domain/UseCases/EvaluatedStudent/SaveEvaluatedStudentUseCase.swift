@@ -2,7 +2,7 @@
 import Foundation
 
 protocol SaveEvaluatedStudentUseCaseProtocol {
-    func execute(student: EvaluatedStudent, template: AnswerTemplate) async throws
+    func execute(student: EvaluatedStudent, template: ExamTemplate) async throws
 }
 
 class SaveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCaseProtocol {
@@ -12,7 +12,7 @@ class SaveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCaseProtocol {
         self.repository = repository
     }
     
-    func execute(student: EvaluatedStudent, template: AnswerTemplate) async throws {
+    func execute(student: EvaluatedStudent, template: ExamTemplate) async throws {
         try await repository.saveStudentinTemplate(student: student, template: template)
     }
 }

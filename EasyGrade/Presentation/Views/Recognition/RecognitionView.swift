@@ -7,7 +7,7 @@ enum RecognitionState {
 }
 
 struct RecognitionView: View {
-    @State var template: AnswerTemplate
+    @State var template: ExamTemplate
     @ObservedObject var examCorrectionViewModel: ExamCorrectionViewModel
     @ObservedObject var cameraViewModel: CameraViewModel
 
@@ -123,7 +123,7 @@ struct RecognitionView: View {
         )
     }
 
-    private func parseAnswers(_ answers: String, template: AnswerTemplate) -> [[Bool]] {
+    private func parseAnswers(_ answers: String, template: ExamTemplate) -> [[Bool]] {
         let options = (0..<template.numberOfAnswersPerQuestion).map { index in
             Character(UnicodeScalar("A".unicodeScalars.first!.value + UInt32(index))!)
         }

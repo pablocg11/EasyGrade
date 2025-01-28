@@ -3,10 +3,10 @@ import Foundation
 import CoreData
 
 
-extension AnswerTemplateEntity {
+extension ExamTemplateEntity {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<AnswerTemplateEntity> {
-        return NSFetchRequest<AnswerTemplateEntity>(entityName: "AnswerTemplateEntity")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<ExamTemplateEntity> {
+        return NSFetchRequest<ExamTemplateEntity>(entityName: "ExamTemplateEntity")
     }
 
     @NSManaged public var cancelledQuestions: [Bool]?
@@ -25,7 +25,7 @@ extension AnswerTemplateEntity {
 }
 
 // MARK: Generated accessors for evaluatedStudents
-extension AnswerTemplateEntity {
+extension ExamTemplateEntity {
 
     @objc(addEvaluatedStudentsObject:)
     @NSManaged public func addToEvaluatedStudents(_ value: EvaluatedStudentEntity)
@@ -41,6 +41,6 @@ extension AnswerTemplateEntity {
 
 }
 
-extension AnswerTemplateEntity : Identifiable {
+extension ExamTemplateEntity : Identifiable {
 
 }

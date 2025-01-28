@@ -1,8 +1,8 @@
 import SwiftUI
 
-struct CreateAnswerTemplateView: View {
+struct CreateExamTemplateView: View {
     
-    @ObservedObject var viewModel: CreateAnswerTemplateViewModel
+    @ObservedObject var viewModel: CreateExamTemplateViewModel
     
     @State private var templateName: String = ""
     @State private var selectedDate: Date = Date()
@@ -56,7 +56,7 @@ struct CreateAnswerTemplateView: View {
                     notificationView()
                         .zIndex(1)
                         .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                                 withAnimation {
                                     showNotification = false 
                                 }
@@ -73,7 +73,7 @@ struct CreateAnswerTemplateView: View {
     }
 }
 
-private extension CreateAnswerTemplateView {
+private extension CreateExamTemplateView {
     
     var templateInfoSection: some View {
         Group {
@@ -130,15 +130,14 @@ private extension CreateAnswerTemplateView {
             
             NavigationLink(destination: CorrectAnswersView(correctAnswerMatrix: $correctAnswerMatrix,
                                                            numberOfQuestions: $numberOfQuestions,
-                                                           numberOfAnswers: $numberOfAnswers,
-                                                           moreThanOneAnswer: $moreThanOneAnswer)) {
+                                                           numberOfAnswers: $numberOfAnswers)) {
                 NavigationButton(navigationTitle: "Respuestas correctas")
             }
         }
     }
     
     func saveTemplate() {
-        viewModel.createAnswerTemplate(
+        viewModel.createExamTemplate(
             name: templateName,
             date: selectedDate,
             numberOfQuestions: numberOfQuestions,

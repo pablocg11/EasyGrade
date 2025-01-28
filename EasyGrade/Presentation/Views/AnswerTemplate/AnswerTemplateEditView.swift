@@ -1,16 +1,15 @@
 import SwiftUI
 
-struct AnswerTemplateEditView: View {
+struct ExamTemplateEditView: View {
     
-    @ObservedObject var viewModel: EditAnswerTemplateViewModel
+    @ObservedObject var viewModel: EditExamTemplateViewModel
     @Environment(\.presentationMode) var presentationMode
-    var template: AnswerTemplate
+    var template: ExamTemplate
     
     @State private var templateName: String
     @State private var selectedDate: Date
     @State private var numberOfQuestions: Int16
     @State private var numberOfAnswers: Int16
-    @State private var moreThanOneAnswer: Bool
     @State private var correctAnswerScore: Double
     @State private var wrongAnswerPenalty: Double
     @State private var blankAnswerPenalty: Double
@@ -20,7 +19,7 @@ struct AnswerTemplateEditView: View {
     
     @State private var showReevaluationAlert: Bool = false
     
-    init(viewModel: EditAnswerTemplateViewModel, template: AnswerTemplate) {
+    init(viewModel: EditExamTemplateViewModel, template: ExamTemplate) {
         self.viewModel = viewModel
         self.template = template
         
@@ -28,7 +27,6 @@ struct AnswerTemplateEditView: View {
         _selectedDate = State(initialValue: template.date)
         _numberOfQuestions = State(initialValue: template.numberOfQuestions)
         _numberOfAnswers = State(initialValue: template.numberOfAnswersPerQuestion)
-        _moreThanOneAnswer = State(initialValue: template.multipleCorrectAnswers)
         _correctAnswerScore = State(initialValue: template.scoreCorrectAnswer)
         _wrongAnswerPenalty = State(initialValue: template.penaltyIncorrectAnswer)
         _blankAnswerPenalty = State(initialValue: template.penaltyBlankAnswer)
@@ -97,11 +95,6 @@ struct AnswerTemplateEditView: View {
                                         }
                                      ))
                     
-                    MainToggle(placeholder: "¿Más de una respuesta correcta?",
-                               isPressed: $moreThanOneAnswer,
-                               pressedText: "Sí",
-                               nonPressedText: "No")
-                    
                     MainNumberTextField(placeholder: "Puntuación por respuesta correcta",
                                         number: $correctAnswerScore)
                     
@@ -118,8 +111,7 @@ struct AnswerTemplateEditView: View {
                     
                     NavigationLink(destination: CorrectAnswersView(correctAnswerMatrix: $correctAnswerMatrix,
                                                                    numberOfQuestions: $numberOfQuestions,
-                                                                   numberOfAnswers: $numberOfAnswers,
-                                                                   moreThanOneAnswer: $moreThanOneAnswer)) {
+                                                                   numberOfAnswers: $numberOfAnswers)) {
                         NavigationButton(navigationTitle: "Respuestas correctas")
                     }
                 }
@@ -142,7 +134,6 @@ struct AnswerTemplateEditView: View {
     private func hasCorrectionChanges() -> Bool {
         return numberOfQuestions != template.numberOfQuestions ||
                numberOfAnswers != template.numberOfAnswersPerQuestion ||
-               moreThanOneAnswer != template.multipleCorrectAnswers ||
                correctAnswerScore != template.scoreCorrectAnswer ||
                wrongAnswerPenalty != template.penaltyIncorrectAnswer ||
                blankAnswerPenalty != template.penaltyBlankAnswer ||
@@ -152,13 +143,12 @@ struct AnswerTemplateEditView: View {
     
     private func saveTemplate() {
         
-        let updatedTemplate = AnswerTemplate(
+        let updatedTemplate = ExamTemplate(
             id: template.id,
             name: templateName,
             date: selectedDate,
             numberOfQuestions: numberOfQuestions,
             numberOfAnswersPerQuestion: numberOfAnswers,
-            multipleCorrectAnswers: moreThanOneAnswer,
             scoreCorrectAnswer: correctAnswerScore,
             penaltyIncorrectAnswer: wrongAnswerPenalty,
             penaltyBlankAnswer: blankAnswerPenalty,
@@ -167,7 +157,7 @@ struct AnswerTemplateEditView: View {
             evaluatedStudents: hasCorrectionChanges() ? [] : template.evaluatedStudents
         )
         Task {
-            await viewModel.updateAnswerTemplate(template: updatedTemplate)
+            await viewModel.updateExamTemplate(template: updatedTemplate)
         }
     }
 }

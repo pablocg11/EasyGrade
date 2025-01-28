@@ -3,7 +3,7 @@ import Foundation
 
 class EvaluatedStudentFactory {
     
-    func createView(for template: AnswerTemplate) -> RecognitionView {
+    func createView(for template: ExamTemplate) -> RecognitionView {
         return RecognitionView(template: template,
                                examCorrectionViewModel: createExamCorrectionViewModel(),
                                cameraViewModel: createCameraViewModel())
@@ -18,23 +18,23 @@ class EvaluatedStudentFactory {
         return CameraViewModel(recognizeExamDataUseCase: createRecognizeExamDataUseCase())
     }
     
-    private func createExamCorrectionUseCase() -> CorrectExamUseCase {
-        return CorrectExamUseCase(repository: createExamCorrectionRepository())
+    private func createExamCorrectionUseCase() -> CorrectExamUseCaseProtocol {
+        return CorrectExamUseCase(service: createExamCorrectionService())
     }
     
-    private func createSaveEvaluatedStudentUseCase() -> SaveEvaluatedStudentUseCase {
+    private func createSaveEvaluatedStudentUseCase() -> SaveEvaluatedStudentUseCaseProtocol {
         return SaveEvaluatedStudentUseCase(repository: createEvaluatedStudentRepository())
     }
     
-    private func createExamCorrectionRepository() -> ExamCorrectionRepository {
-        return ExamCorrectionRepository()
+    private func createExamCorrectionService() -> ExamCorrectionServiceProtocol{
+        return ExamCorrectionService()
     }
     
     private func createEvaluatedStudentRepository() -> EvaluatedStudentRepository {
         return EvaluatedStudentRepository()
     }
     
-    private func createRecognizeExamDataUseCase() -> RecognizeExamDataUseCase {
-        return RecognizeExamDataUseCase(processor: ExamDataProcessor())
+    private func createRecognizeExamDataUseCase() -> RecognizeExamDataUseCaseProtocol {
+        return RecognizeExamDataUseCase(service: ExamDataProcessingService())
     }
 }

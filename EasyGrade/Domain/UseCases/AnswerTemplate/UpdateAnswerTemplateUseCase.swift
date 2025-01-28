@@ -1,18 +1,18 @@
 
 import Foundation
 
-protocol UpdateAnswerTemplateUseCaseType {
-    func execute(template: AnswerTemplate) async throws
+protocol UpdateExamTemplateUseCaseProtocol {
+    func execute(template: ExamTemplate) async throws
 }
 
-class UpdateAnswerTemplateUseCase: UpdateAnswerTemplateUseCaseType {
-    private let repository: AnswerTemplateRepository
+class UpdateExamTemplateUseCase: UpdateExamTemplateUseCaseProtocol {
+    private let repository: ExamTemplateRepositoryProtocol
 
-    init(answerTemplateRepository: AnswerTemplateRepository) {
-        self.repository = answerTemplateRepository
+    init(ExamTemplateRepository: ExamTemplateRepositoryProtocol) {
+        self.repository = ExamTemplateRepository
     }
 
-    func execute(template: AnswerTemplate) async throws {
+    func execute(template: ExamTemplate) async throws {
         repository.updateTemplate(template: template)
     }
 }

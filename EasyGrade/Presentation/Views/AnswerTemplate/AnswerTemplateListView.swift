@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct AnswerTemplateListView: View {
-    @ObservedObject var viewModel: ListAnswerTemplateViewModel
-    @ObservedObject var editViewModel: EditAnswerTemplateViewModel
-    @ObservedObject var deleteViewModel: DeleteAnswerTemplateViewModel
+struct ExamTemplateListView: View {
+    @ObservedObject var viewModel: ListExamTemplateViewModel
+    @ObservedObject var editViewModel: EditExamTemplateViewModel
+    @ObservedObject var deleteViewModel: DeleteExamTemplateViewModel
     @ObservedObject var listEvaluatedStudentsViewModel: ListEvaluatedStudentsViewModel
 
-    init(viewModel: ListAnswerTemplateViewModel, editViewModel: EditAnswerTemplateViewModel, deleteViewModel: DeleteAnswerTemplateViewModel, listEvaluatedStudentsViewModel: ListEvaluatedStudentsViewModel) {
+    init(viewModel: ListExamTemplateViewModel, editViewModel: EditExamTemplateViewModel, deleteViewModel: DeleteExamTemplateViewModel, listEvaluatedStudentsViewModel: ListEvaluatedStudentsViewModel) {
         self.viewModel = viewModel
         self.editViewModel = editViewModel
         self.deleteViewModel = deleteViewModel
@@ -21,7 +21,7 @@ struct AnswerTemplateListView: View {
                 }
                 else {
                     VStack {
-                        if viewModel.answerTemplateList.isEmpty {
+                        if viewModel.ExamTemplateList.isEmpty {
                             EmptyListView(description: "Aún no hay plantillas disponibles",
                                           icon: "checklist")
                         } else {
@@ -33,9 +33,9 @@ struct AnswerTemplateListView: View {
                                 .padding(.horizontal)
                                 
                                 List {
-                                    ForEach(viewModel.answerTemplateList, id: \.id) { template in
+                                    ForEach(viewModel.ExamTemplateList, id: \.id) { template in
                                         NavigationLink(destination: EvaluatedStudentFactory().createView(for: template)){
-                                            AnswerTemplateCard(editViewModel: editViewModel,
+                                            ExamTemplateCard(editViewModel: editViewModel,
                                                                    deleteViewModel: deleteViewModel,
                                                                    listViewModel: viewModel,
                                                                    listEvaluatedStudentsViewModel: listEvaluatedStudentsViewModel,

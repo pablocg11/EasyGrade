@@ -2,18 +2,19 @@
 import Foundation
 
 class ExamCorrectionViewModel: ObservableObject {
-    private let examCorrectionUseCase: CorrectExamUseCase
-    private let saveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCase
+    private let examCorrectionUseCase: CorrectExamUseCaseProtocol
+    private let saveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCaseProtocol
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var examScore: ExamCorrectionResult?
     
-    init(examCorrectionUseCase: CorrectExamUseCase, saveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCase) {
+    init(examCorrectionUseCase: CorrectExamUseCaseProtocol,
+         saveEvaluatedStudentUseCase: SaveEvaluatedStudentUseCaseProtocol) {
         self.examCorrectionUseCase = examCorrectionUseCase
         self.saveEvaluatedStudentUseCase = saveEvaluatedStudentUseCase
     }
     
-    func onAppear(studentAnswers: String, template: AnswerTemplate) {
+    func onAppear(studentAnswers: String, template: ExamTemplate) {
         isLoading = true
         errorMessage = nil
         examScore = nil
@@ -35,7 +36,7 @@ class ExamCorrectionViewModel: ObservableObject {
         }
     }
     
-    func saveEvaluatedStudent(evaluatedStudent: EvaluatedStudent, template: AnswerTemplate) {
+    func saveEvaluatedStudent(evaluatedStudent: EvaluatedStudent, template: ExamTemplate) {
         isLoading = true
         
         Task {

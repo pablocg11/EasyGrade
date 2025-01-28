@@ -1,29 +1,29 @@
 import Foundation
 
-class EditAnswerTemplateViewModel: ObservableObject {
+class EditExamTemplateViewModel: ObservableObject {
     
-    private let updateAnswerTemplateUseCase: UpdateAnswerTemplateUseCaseType
+    private let updateExamTemplateUseCase: UpdateExamTemplateUseCaseProtocol
     private let correctExamUseCase: CorrectExamUseCaseProtocol
     private let updateEvaluatedStudentScoreUseCase: UpdateEvaluatedStudentScoreUseCaseProtocol
-    @Published var answerTemplate: AnswerTemplate?
+    @Published var ExamTemplate: ExamTemplate?
     @Published var showLoading: Bool = false
     @Published var errorMessage: String?
     
-    init(updateAnswerTemplateUseCase: UpdateAnswerTemplateUseCaseType,
+    init(updateExamTemplateUseCase: UpdateExamTemplateUseCaseProtocol,
          correctExamUseCase: CorrectExamUseCaseProtocol,
          updateEvaluatedStudentScoreUseCase: UpdateEvaluatedStudentScoreUseCaseProtocol) {
-        self.updateAnswerTemplateUseCase = updateAnswerTemplateUseCase
+        self.updateExamTemplateUseCase = updateExamTemplateUseCase
         self.correctExamUseCase = correctExamUseCase
         self.updateEvaluatedStudentScoreUseCase = updateEvaluatedStudentScoreUseCase
     }
     
-    func updateAnswerTemplate(template: AnswerTemplate) async {
+    func updateExamTemplate(template: ExamTemplate) async {
         Task { @MainActor in
             showLoading = true
             defer { showLoading = false }
             
             do {
-                try await updateAnswerTemplateUseCase.execute(template: template)
+                try await updateExamTemplateUseCase.execute(template: template)
             } catch {
                 errorMessage = "Error al actualizar la plantilla: \(error.localizedDescription)"
             }

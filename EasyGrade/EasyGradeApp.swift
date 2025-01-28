@@ -12,8 +12,8 @@ struct ScanGraterApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(createAnswerTemplateView: CreateAnswerTemplateFactory().createView(),
-                        listAnswerTemplateView: ListAnswerTemplateFactory().createView())
+            ContentView(createExamTemplateView: CreateExamTemplateFactory().createView(),
+                        listExamTemplateView: ListExamTemplateFactory().createView())
         }
     }
 }

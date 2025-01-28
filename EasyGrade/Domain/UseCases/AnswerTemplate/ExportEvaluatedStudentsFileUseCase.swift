@@ -2,17 +2,17 @@
 import Foundation
 
 protocol ExportEvaluatedStudentsFileUseCaseProtocol {
-    func execute(template: AnswerTemplate) async throws
+    func execute(template: ExamTemplate) async throws
 }
 
 class ExportEvaluatedStudentsFileUseCase: ExportEvaluatedStudentsFileUseCaseProtocol {
-    private let repository: EvaluatedStudentRepository
+    private let repository: EvaluatedStudentRepositoryProtocol
     
-    init(repository: EvaluatedStudentRepository) {
+    init(repository: EvaluatedStudentRepositoryProtocol) {
         self.repository = repository
     }
     
-    func execute(template: AnswerTemplate) async throws {
+    func execute(template: ExamTemplate) async throws {
         try await repository.exportEvaluatedStudentsFile(template: template)
     }
 }

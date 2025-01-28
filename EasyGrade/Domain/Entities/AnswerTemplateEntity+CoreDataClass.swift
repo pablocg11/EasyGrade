@@ -2,7 +2,7 @@
 import Foundation
 import CoreData
 
-@objc(AnswerTemplateEntity)
-public class AnswerTemplateEntity: NSManagedObject {
+@objc(ExamTemplateEntity)
+public class ExamTemplateEntity: NSManagedObject {
 
 }

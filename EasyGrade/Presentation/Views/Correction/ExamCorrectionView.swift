@@ -10,7 +10,7 @@ import SwiftUI
 struct ExamCorrectionView: View {
     @State var extractedData: ExamData
     let saveAction: () -> Void
-    let template: AnswerTemplate
+    let template: ExamTemplate
     let examCalification: ExamCorrectionResult
     @Environment(\.dismiss) var dismiss
     

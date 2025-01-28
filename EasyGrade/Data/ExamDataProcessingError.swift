@@ -1,7 +1,7 @@
 
 import Foundation
 
-enum ExamDataProcessingError: Error {
+enum ExamDataProcessingError: LocalizedError {
     case missingField(String)
     case invalidFormat
     

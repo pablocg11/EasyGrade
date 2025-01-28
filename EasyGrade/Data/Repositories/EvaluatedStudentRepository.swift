@@ -4,9 +4,11 @@ import CoreData
 import UIKit
 
 protocol EvaluatedStudentRepositoryProtocol {
-    func saveStudentinTemplate(student: EvaluatedStudent, template: AnswerTemplate) async throws
-    func updateEvaluatedStudentScore(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: AnswerTemplate) async throws
-    func fetchAllStudentsFromTemplate(template: AnswerTemplate) async throws -> [EvaluatedStudent]
+    func saveStudentinTemplate(student: EvaluatedStudent, template: ExamTemplate) async throws
+    func updateEvaluatedStudentScore(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: ExamTemplate) async throws
+    func fetchAllStudentsFromTemplate(template: ExamTemplate) async throws -> [EvaluatedStudent]
+    func exportEvaluatedStudentsFile(template: ExamTemplate) async throws
+    func deleteStudentFromTemplate(student: EvaluatedStudent, template: ExamTemplate) async throws 
 }
 
 class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
@@ -16,9 +18,9 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
         self.viewContext = viewContext
     }
     
-    func saveStudentinTemplate(student: EvaluatedStudent, template: AnswerTemplate) async throws {
+    func saveStudentinTemplate(student: EvaluatedStudent, template: ExamTemplate) async throws {
         return try await self.viewContext.perform {
-            let fetchRequest: NSFetchRequest<AnswerTemplateEntity> = AnswerTemplateEntity.fetchRequest()
+            let fetchRequest: NSFetchRequest<ExamTemplateEntity> = ExamTemplateEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", template.id as CVarArg)
 
             guard let templateEntity = try self.viewContext.fetch(fetchRequest).first else {
@@ -42,7 +44,7 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
         }
     }
     
-    func updateEvaluatedStudentScore(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: AnswerTemplate) async throws {
+    func updateEvaluatedStudentScore(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: ExamTemplate) async throws {
         try await self.viewContext.perform {
             let fetchRequest: NSFetchRequest<EvaluatedStudentEntity> = EvaluatedStudentEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", student.id as CVarArg)
@@ -57,9 +59,9 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
         }
     }
     
-    func deleteStudentFromTemplate(student: EvaluatedStudent, template: AnswerTemplate) async throws {
+    func deleteStudentFromTemplate(student: EvaluatedStudent, template: ExamTemplate) async throws {
         try await self.viewContext.perform {
-            let fetchRequest: NSFetchRequest<AnswerTemplateEntity> = AnswerTemplateEntity.fetchRequest()
+            let fetchRequest: NSFetchRequest<ExamTemplateEntity> = ExamTemplateEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", template.id as CVarArg)
             
             guard let templateEntity = try self.viewContext.fetch(fetchRequest).first else {
@@ -76,17 +78,17 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
         }
     }
     
-    func fetchAllStudentsFromTemplate(template: AnswerTemplate) async throws -> [EvaluatedStudent] {
+    func fetchAllStudentsFromTemplate(template: ExamTemplate) async throws -> [EvaluatedStudent] {
         try await self.viewContext.perform {
             
-            let fetchRequest: NSFetchRequest<AnswerTemplateEntity> = AnswerTemplateEntity.fetchRequest()
+            let fetchRequest: NSFetchRequest<ExamTemplateEntity> = ExamTemplateEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", template.id as CVarArg)
             
-            guard let answerTemplateEntity = try self.viewContext.fetch(fetchRequest).first else {
+            guard let ExamTemplateEntity = try self.viewContext.fetch(fetchRequest).first else {
                 throw NSError(domain: "SaveStudentError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Template not found."])
             }
             
-            return answerTemplateEntity.evaluatedStudents.map { studentEntity in
+            return ExamTemplateEntity.evaluatedStudents.map { studentEntity in
                 return EvaluatedStudent(
                     id: studentEntity.id ?? UUID(),
                     dni: studentEntity.dni ?? "",
@@ -98,9 +100,9 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
         }
     }
     
-    func exportEvaluatedStudentsFile(template: AnswerTemplate) async throws {
+    func exportEvaluatedStudentsFile(template: ExamTemplate) async throws {
         try await self.viewContext.perform {
-            let fetchRequest: NSFetchRequest<AnswerTemplateEntity> = AnswerTemplateEntity.fetchRequest()
+            let fetchRequest: NSFetchRequest<ExamTemplateEntity> = ExamTemplateEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", template.id as CVarArg)
             
             guard let templateEntity = try self.viewContext.fetch(fetchRequest).first else {

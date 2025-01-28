@@ -1,22 +1,22 @@
 import Foundation
 
-class DeleteAnswerTemplateViewModel: ObservableObject {
-    private let deleteAnswerTemplateUseCase: DeleteAnswerTemplateUseCaseType
+class DeleteExamTemplateViewModel: ObservableObject {
+    private let deleteExamTemplateUseCase: DeleteExamTemplateUseCaseProtocol
     
     @Published var showLoading: Bool = false
     @Published var errorMessage: String?
     
-    init(deleteAnswerTemplateUseCase: DeleteAnswerTemplateUseCaseType) {
-        self.deleteAnswerTemplateUseCase = deleteAnswerTemplateUseCase
+    init(deleteExamTemplateUseCase: DeleteExamTemplateUseCaseProtocol) {
+        self.deleteExamTemplateUseCase = deleteExamTemplateUseCase
     }
     
-    func deleteAnswerTemplate(templateId: UUID) {
+    func deleteExamTemplate(templateId: UUID) {
         Task { @MainActor in
             showLoading = true
             errorMessage = nil
             
             do {
-                try await deleteAnswerTemplateUseCase.execute(id: templateId)
+                try await deleteExamTemplateUseCase.execute(id: templateId)
             } catch {
                 errorMessage = "Error al eliminar la plantilla: \(error.localizedDescription)"
             }

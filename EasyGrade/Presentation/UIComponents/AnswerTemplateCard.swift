@@ -1,14 +1,14 @@
 
 import SwiftUI
 
-struct AnswerTemplateCard: View {
+struct ExamTemplateCard: View {
     
-    @ObservedObject var editViewModel: EditAnswerTemplateViewModel
-    @ObservedObject var deleteViewModel: DeleteAnswerTemplateViewModel
-    @ObservedObject var listViewModel: ListAnswerTemplateViewModel
+    @ObservedObject var editViewModel: EditExamTemplateViewModel
+    @ObservedObject var deleteViewModel: DeleteExamTemplateViewModel
+    @ObservedObject var listViewModel: ListExamTemplateViewModel
     @ObservedObject var listEvaluatedStudentsViewModel: ListEvaluatedStudentsViewModel
     
-    var template: AnswerTemplate
+    var template: ExamTemplate
     @State private var navigateToEdit = false
     @State private var navigateToList = false
     
@@ -21,7 +21,7 @@ struct AnswerTemplateCard: View {
                     viewButton
                 }
                 .navigationDestination(isPresented: $navigateToEdit) {
-                    AnswerTemplateEditView(viewModel: editViewModel, template: template)
+                    ExamTemplateEditView(viewModel: editViewModel, template: template)
                         .onDisappear {
                             listViewModel.onAppear()
                         }
@@ -102,8 +102,8 @@ struct AnswerTemplateCard: View {
     
     private var deleteButton: some View {
         Button(role: .destructive) {
-            deleteViewModel.deleteAnswerTemplate(templateId: template.id)
-            listViewModel.answerTemplateList.removeAll { $0.id == template.id }
+            deleteViewModel.deleteExamTemplate(templateId: template.id)
+            listViewModel.ExamTemplateList.removeAll { $0.id == template.id }
         } label: {
             Label("Borrar", systemImage: "trash")
         }

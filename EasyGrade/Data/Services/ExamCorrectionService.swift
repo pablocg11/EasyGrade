@@ -1,13 +1,12 @@
 
 import Foundation
 
-protocol ExamCorrectionRepositoryProtocol {
-    func correctExam(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult
+protocol ExamCorrectionServiceProtocol {
+    func correctExam(studentAnswers: String, template: ExamTemplate) async throws -> ExamCorrectionResult
 }
 
-class ExamCorrectionRepository: ExamCorrectionRepositoryProtocol {
-    
-    func correctExam(studentAnswers: String, template: AnswerTemplate) async throws -> ExamCorrectionResult {
+class ExamCorrectionService: ExamCorrectionServiceProtocol {
+    func correctExam(studentAnswers: String, template: ExamTemplate) async throws -> ExamCorrectionResult {
         let numberOfQuestions = template.correctAnswerMatrix.count
         let areAnswersValid = studentAnswers.count == numberOfQuestions
         

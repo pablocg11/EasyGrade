@@ -1,23 +1,23 @@
 
 import Foundation
 
-class ListAnswerTemplateFactory {
+class ListExamTemplateFactory {
     
-    func createView() -> AnswerTemplateListView {
-        return AnswerTemplateListView(viewModel: createViewModel(), 
+    func createView() -> ExamTemplateListView {
+        return ExamTemplateListView(viewModel: createViewModel(), 
                                       editViewModel: createEditViewModel(),
                                       deleteViewModel: createDeleteViewModel(),
                                       listEvaluatedStudentsViewModel: createListEvaluatedStudentsViewModel())
     }
     
-    private func createEditViewModel() -> EditAnswerTemplateViewModel {
-        return EditAnswerTemplateViewModel(updateAnswerTemplateUseCase: createUpdateAnswerTemplateUseCase(),
+    private func createEditViewModel() -> EditExamTemplateViewModel {
+        return EditExamTemplateViewModel(updateExamTemplateUseCase: createUpdateExamTemplateUseCase(),
                                            correctExamUseCase: createExamCorrectionUseCase(),
                                            updateEvaluatedStudentScoreUseCase: createUpdateEvaluatedStudentScoreUseCase())
     }
     
-    private func createDeleteViewModel() -> DeleteAnswerTemplateViewModel {
-        return DeleteAnswerTemplateViewModel(deleteAnswerTemplateUseCase: createDeleteAnswerTemplateUseCase())
+    private func createDeleteViewModel() -> DeleteExamTemplateViewModel {
+        return DeleteExamTemplateViewModel(deleteExamTemplateUseCase: createDeleteExamTemplateUseCase())
     }
     
     private func createListEvaluatedStudentsViewModel() -> ListEvaluatedStudentsViewModel {
@@ -27,51 +27,51 @@ class ListAnswerTemplateFactory {
     }
     
     private func createExamCorrectionUseCase() -> CorrectExamUseCaseProtocol {
-        return CorrectExamUseCase(repository: createExamRepository())
+        return CorrectExamUseCase(service: createExamCorrectionService())
     }
     
-    private func createUpdateEvaluatedStudentScoreUseCase() -> UpdateEvaluatedStudentScoreUseCase {
+    private func createUpdateEvaluatedStudentScoreUseCase() -> UpdateEvaluatedStudentScoreUseCaseProtocol {
         return UpdateEvaluatedStudentScoreUseCase(repository: createEvaluatedStudentRepository())
     }
     
-    private func createFetchEvaluatedStudentsUseCase() -> FetchEvaluatedStudentsUseCase {
+    private func createFetchEvaluatedStudentsUseCase() -> FetchEvaluatedStudentsUseCaseProtocol {
         return FetchEvaluatedStudentsUseCase(repository: createEvaluatedStudentRepository())
     }
     
-    private func createDeleteEvaluatedStudentUseCase() -> DeleteEvaluatedStudentUseCase {
+    private func createDeleteEvaluatedStudentUseCase() -> DeleteEvaluatedStudentUseCaseProtocol {
         return DeleteEvaluatedStudentUseCase(repository: createEvaluatedStudentRepository())
     }
     
-    private func createExportEvaluatedStudentsFileUseCase() -> ExportEvaluatedStudentsFileUseCase {
+    private func createExportEvaluatedStudentsFileUseCase() -> ExportEvaluatedStudentsFileUseCaseProtocol {
         return ExportEvaluatedStudentsFileUseCase(repository: createEvaluatedStudentRepository())
     }
     
-    private func createUpdateAnswerTemplateUseCase() -> UpdateAnswerTemplateUseCaseType {
-        return UpdateAnswerTemplateUseCase(answerTemplateRepository: createRepository())
+    private func createUpdateExamTemplateUseCase() -> UpdateExamTemplateUseCaseProtocol {
+        return UpdateExamTemplateUseCase(ExamTemplateRepository: createRepository())
     }
 
-    private func createDeleteAnswerTemplateUseCase() -> DeleteAnswerTemplateUseCaseType {
-        return DeleteAnswerTemplateUseCase(answerTemplateRepository: createRepository())
+    private func createDeleteExamTemplateUseCase() -> DeleteExamTemplateUseCaseProtocol {
+        return DeleteExamTemplateUseCase(ExamTemplateRepository: createRepository())
     }
     
-    private func createViewModel() -> ListAnswerTemplateViewModel {
-        return ListAnswerTemplateViewModel(getAnswerTemplatesUseCase: createListAnswerTemplateUseCase())
+    private func createViewModel() -> ListExamTemplateViewModel {
+        return ListExamTemplateViewModel(getExamTemplatesUseCase: createListExamTemplateUseCase())
     }
     
-    private func createListAnswerTemplateUseCase() -> GetAnswerTemplatesUseCaseType {
-        return GetAnswerTemplatesUseCase(answerTemplateRepository: createRepository())
+    private func createListExamTemplateUseCase() -> GetExamTemplatesUseCaseProtocol {
+        return GetExamTemplatesUseCase(ExamTemplateRepository: createRepository())
     }
     
-    private func createEvaluatedStudentRepository() -> EvaluatedStudentRepository {
+    private func createEvaluatedStudentRepository() -> EvaluatedStudentRepositoryProtocol {
         return EvaluatedStudentRepository()
     }
     
-    private func createExamRepository() -> ExamCorrectionRepository {
-        return ExamCorrectionRepository()
+    private func createExamCorrectionService() -> ExamCorrectionServiceProtocol {
+        return ExamCorrectionService()
     }
 
-    private func createRepository() -> AnswerTemplateRepository {
-        return AnswerTemplateRepository()
+    private func createRepository() -> ExamTemplateRepository {
+        return ExamTemplateRepository()
     }
     
 }

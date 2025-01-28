@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    let createAnswerTemplateView: CreateAnswerTemplateView
-    let listAnswerTemplateView: AnswerTemplateListView
+    let createExamTemplateView: CreateExamTemplateView
+    let listExamTemplateView: ExamTemplateListView
 
     var body: some View {
         ZStack {
@@ -10,12 +10,12 @@ struct ContentView: View {
                 .ignoresSafeArea()
             
             TabView {
-                createAnswerTemplateView
+                createExamTemplateView
                     .tabItem {
                         Label("Nueva plantilla", systemImage: "plus.app")
                     }
                 
-                listAnswerTemplateView
+                listExamTemplateView
                     .tabItem {
                         Label("Plantillas", systemImage: "list.bullet.rectangle.portrait.fill")
                     }

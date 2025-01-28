@@ -1,16 +1,15 @@
 
 import Foundation
 
-class ListAnswerTemplateViewModel: ObservableObject {
+class ListExamTemplateViewModel: ObservableObject {
+    private let getExamTemplatesUseCase: GetExamTemplatesUseCaseProtocol
     
-    private let getAnswerTemplatesUseCase: GetAnswerTemplatesUseCaseType
-    
-    @Published var answerTemplateList: [AnswerTemplate] = []
+    @Published var ExamTemplateList: [ExamTemplate] = []
     @Published var showLoading: Bool = false
     @Published var errorMessage: String?
     
-    init(getAnswerTemplatesUseCase: GetAnswerTemplatesUseCaseType) {
-        self.getAnswerTemplatesUseCase = getAnswerTemplatesUseCase
+    init(getExamTemplatesUseCase: GetExamTemplatesUseCaseProtocol) {
+        self.getExamTemplatesUseCase = getExamTemplatesUseCase
     }
     
     func onAppear() {
@@ -19,7 +18,7 @@ class ListAnswerTemplateViewModel: ObservableObject {
         
         Task {
             do {
-                let templates = try await getAnswerTemplatesUseCase.execute()
+                let templates = try await getExamTemplatesUseCase.execute()
                 await handleResult(templates)
             } catch {
                 await handleError(error)
@@ -28,9 +27,9 @@ class ListAnswerTemplateViewModel: ObservableObject {
     }
     
     @MainActor
-    private func handleResult(_ answerTemplateList: [AnswerTemplate]) {
+    private func handleResult(_ ExamTemplateList: [ExamTemplate]) {
         self.showLoading = false
-        self.answerTemplateList = answerTemplateList
+        self.ExamTemplateList = ExamTemplateList
     }
     
     @MainActor

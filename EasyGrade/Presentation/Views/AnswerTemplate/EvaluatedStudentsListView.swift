@@ -3,9 +3,9 @@ import SwiftUI
 
 struct EvaluatedStudentsListView: View {
     @ObservedObject var viewModel: ListEvaluatedStudentsViewModel
-    let template: AnswerTemplate
+    let template: ExamTemplate
     
-    init(viewModel: ListEvaluatedStudentsViewModel, template: AnswerTemplate) {
+    init(viewModel: ListEvaluatedStudentsViewModel, template: ExamTemplate) {
         self.viewModel = viewModel
         self.template = template
     }

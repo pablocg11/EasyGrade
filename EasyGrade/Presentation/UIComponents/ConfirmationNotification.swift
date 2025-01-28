@@ -15,7 +15,7 @@ struct ConfirmationNotification: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 15) {
-            LottieView(animation: error ? .named("error_animation.json") : .named("confirmation_animation.json"))
+            LottieView(animation: error ? .named("alert_animation.json") : .named("confirmation_animation.json"))
                 .playing(loopMode: .playOnce)
                 .frame(maxWidth: 100, maxHeight: 100)
 
