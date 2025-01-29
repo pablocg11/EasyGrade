@@ -7,9 +7,9 @@ protocol ExamDataProcessingServiceProtocol {
 final class ExamDataProcessingService: ExamDataProcessingServiceProtocol {
     func processExamData(_ rawText: String) throws -> ExamData? {
         let lines = rawText.components(separatedBy: "\n").filter { !$0.isEmpty }
-                
+        
         guard let name = extractData(from: lines, pattern: RegexPatterns.nameRegex)?
-            .replacingOccurrences(of: "[\\,]", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "[\\,.]", with: "", options: .regularExpression)
             .uppercased() else {
             throw ExamDataProcessingError.missingField("name_surname")
         }
