@@ -12,5 +12,6 @@ struct ExamTemplate: Identifiable, Hashable {
     var penaltyBlankAnswer: Double
     var cancelledQuestions: [Bool]
     var correctAnswerMatrix: [[Bool]]
+    var students: [Student]
     var evaluatedStudents: [EvaluatedStudent]
 }

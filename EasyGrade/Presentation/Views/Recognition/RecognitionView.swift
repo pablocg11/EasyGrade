@@ -10,13 +10,12 @@ struct RecognitionView: View {
     @State var template: ExamTemplate
     @ObservedObject var examCorrectionViewModel: ExamCorrectionViewModel
     @ObservedObject var cameraViewModel: CameraViewModel
-
+    
     @State private var recognitionState: RecognitionState = .placeholder
     @State private var recognizedData: ExamData?
-    
-    @State private var editableStudentName = ""
-    @State private var editableStudentDNI = ""
-    
+    @State private var editableAnswers: String = ""
+
+    @State var selectedStudent: Student?
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -71,18 +70,22 @@ struct RecognitionView: View {
             }
         }
         .onAppear {
-            examCorrectionViewModel.onAppear(studentAnswers: data.answers, template: template)
+            examCorrectionViewModel.onAppear(studentName: data.name,
+                                             studentDNI: data.dni,
+                                             studentAnswers: data.answers,
+                                             template: template,
+                                             students: template.students)
         }
     }
 
     private func recognizedDataBody(_ data: ExamData, _ examCalification: ExamCorrectionResult) -> some View {
         ExamCorrectionView(
             extractedData: data,
+            matchingStudent: examCorrectionViewModel.matchingStudent,
             saveAction: { saveStudentEvaluation(data, examCalification) },
             template: template,
             examCalification: examCalification,
-            editableStudentName: $editableStudentName,
-            editableStudentDNI: $editableStudentDNI
+            selectedStudent: $selectedStudent
         )
         .transition(.opacity.animation(.easeInOut))
     }
@@ -90,8 +93,13 @@ struct RecognitionView: View {
     private func handleDataChange(_ newData: ExamData?) {
         guard let data = newData else { return }
         recognizedData = data
+        editableAnswers = data.answers
 
-        examCorrectionViewModel.onAppear(studentAnswers: data.answers, template: template)
+        examCorrectionViewModel.onAppear(studentName: data.name,
+                                         studentDNI: data.dni,
+                                         studentAnswers: data.answers,
+                                         template: template,
+                                         students: template.students)
 
         withAnimation {
             recognitionState = .notification
@@ -99,7 +107,7 @@ struct RecognitionView: View {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            if let _ = examCorrectionViewModel.errorMessage {
+            if examCorrectionViewModel.errorMessage != nil {
                 dismiss()
             } else {
                 withAnimation {
@@ -110,9 +118,13 @@ struct RecognitionView: View {
     }
 
     private func saveStudentEvaluation(_ evaluatedStudent: ExamData, _ examCalification: ExamCorrectionResult) {
+        guard let student = selectedStudent else {
+            return
+        }
+
         let studentEvaluated = EvaluatedStudent(
-            dni: editableStudentDNI,
-            name: editableStudentName,
+            dni: student.dni,
+            name: student.name,
             score: examCalification.totalScore,
             answerMatrix: parseAnswers(evaluatedStudent.answers, template: template)
         )
@@ -121,13 +133,22 @@ struct RecognitionView: View {
             evaluatedStudent: studentEvaluated,
             template: template
         )
+
+        withAnimation {
+            selectedStudent = nil
+            examCorrectionViewModel.matchingStudent = nil
+            recognizedData = nil
+            recognitionState = .placeholder
+        }
+        
+        cameraViewModel.startSession()
     }
 
     private func parseAnswers(_ answers: String, template: ExamTemplate) -> [[Bool]] {
         let options = (0..<template.numberOfAnswersPerQuestion).map { index in
             Character(UnicodeScalar("A".unicodeScalars.first!.value + UInt32(index))!)
         }
-
+        
         return answers.map { char in
             if char == "-" {
                 return Array(repeating: false, count: Int(template.numberOfAnswersPerQuestion))

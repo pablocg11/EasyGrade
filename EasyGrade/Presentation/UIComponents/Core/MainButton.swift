@@ -4,7 +4,7 @@ import SwiftUI
 struct MainButton: View {
     var title: String
     var action: () -> Void
-    var disabled: Bool
+    var disabled: Bool = false
 
     var body: some View {
         Button(action: action) {

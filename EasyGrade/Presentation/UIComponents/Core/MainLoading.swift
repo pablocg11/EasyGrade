@@ -9,10 +9,6 @@ struct MainLoading: View {
                 .playing(loopMode: .loop)
                 .animationSpeed(1)
                 .frame(maxWidth: 200, maxHeight: 200)
-            
-            MainText(text: "Cargando...",
-                     textColor: Color("AppPrimaryColor"),
-                     font: .callout)
         }
     }
 }

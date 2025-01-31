@@ -46,7 +46,7 @@ struct CreateExamTemplateView: View {
                         saveTemplate()
                         showNotification = true
                     }
-                               , disabled: isTemplateValid || !hasValidCorrectAnswers)
+                               ,disabled: isTemplateValid || !hasValidCorrectAnswers)
                 }
                 .padding()
                 .onChange(of: numberOfQuestions) { adjustFields() }

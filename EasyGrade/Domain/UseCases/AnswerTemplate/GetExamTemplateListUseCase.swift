@@ -1,11 +1,11 @@
 
 import Foundation
 
-protocol GetExamTemplatesUseCaseProtocol {
+protocol GetExamTemplateListUseCaseProtocol {
     func execute() async throws -> [ExamTemplate]
 }
 
-class GetExamTemplatesUseCase: GetExamTemplatesUseCaseProtocol {
+class GetExamTemplateListUseCase: GetExamTemplateListUseCaseProtocol {
     private let repository: ExamTemplateRepositoryProtocol
 
     init(ExamTemplateRepository: ExamTemplateRepositoryProtocol) {

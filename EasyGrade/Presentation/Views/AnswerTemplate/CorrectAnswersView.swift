@@ -15,7 +15,7 @@ struct CorrectAnswersView: View {
     var body: some View {
         
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 15) {
+            VStack(alignment: .leading, spacing: 10) {
                 ForEach(0..<Int(numberOfQuestions), id: \.self) { questionIndex in
                     MainText(text: "Pregunta \(questionIndex + 1)",
                              textColor: Color("AppPrimaryColor"),
@@ -32,7 +32,6 @@ struct CorrectAnswersView: View {
                                                 correctAnswerMatrix[questionIndex][answerIndex] = newValue
                                             }
                                         ))
-                        
                     }
                 }
             }

@@ -58,6 +58,12 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                     penaltyBlankAnswer: entity.penaltyBlankAnswer,
                     cancelledQuestions: entity.cancelledQuestions ?? [],
                     correctAnswerMatrix: entity.correctAnswerMatrix ?? [[]],
+                    students: entity.students.map { studentEntity in
+                        Student(id:  studentEntity.id ?? UUID(),
+                                dni: studentEntity.dni ?? "",
+                                name: studentEntity.name ?? ""
+                        )
+                    },
                     evaluatedStudents: entity.evaluatedStudents.map { studentEntity in
                         EvaluatedStudent(
                             id: studentEntity.id ?? UUID(),
@@ -81,6 +87,13 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
         
         do {
             if let entity = try viewContext.fetch(request).first {
+                let students = entity.students.map { studentEntity in
+                    Student(id: studentEntity.id ?? UUID(),
+                            dni: studentEntity.dni ?? "",
+                            name: studentEntity.name ?? ""
+                    )
+                }
+                
                 let evaluatedStudents = entity.evaluatedStudents.map { studentEntity in
                     EvaluatedStudent(
                         id: studentEntity.id ?? UUID(),
@@ -102,6 +115,7 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                     penaltyBlankAnswer: entity.penaltyBlankAnswer,
                     cancelledQuestions: entity.cancelledQuestions ?? [],
                     correctAnswerMatrix: entity.correctAnswerMatrix ?? [[]],
+                    students: students,
                     evaluatedStudents: evaluatedStudents
                 )
             } else {
@@ -130,6 +144,7 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
     func updateTemplate(template: ExamTemplate) {
         let request: NSFetchRequest<ExamTemplateEntity> = ExamTemplateEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", template.id as CVarArg)
+        
         do {
             if let entity = try viewContext.fetch(request).first {
                 entity.name = template.name
@@ -141,17 +156,36 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                 entity.penaltyBlankAnswer = template.penaltyBlankAnswer
                 entity.cancelledQuestions = template.cancelledQuestions
                 entity.correctAnswerMatrix = template.correctAnswerMatrix
+
+                let studentFetchRequest: NSFetchRequest<StudentEntity> = StudentEntity.fetchRequest()
+                let evaluatedStudentFetchRequest: NSFetchRequest<EvaluatedStudentEntity> = EvaluatedStudentEntity.fetchRequest()
                 
-                entity.evaluatedStudents = Set(template.evaluatedStudents.map { student in
-                    let studentEntity = EvaluatedStudentEntity(context: viewContext)
-                    studentEntity.id = student.id
-                    studentEntity.dni = student.dni
-                    studentEntity.name = student.name
-                    studentEntity.scoreValue = NSDecimalNumber(value: student.score ?? 0.0)
-                    studentEntity.answerMatrix = student.answerMatrix
-                    return studentEntity
-                })
+                let existingStudents = try viewContext.fetch(studentFetchRequest)
+                let existingEvaluatedStudents = try viewContext.fetch(evaluatedStudentFetchRequest)
                 
+                existingStudents.forEach { viewContext.delete($0) }
+                existingEvaluatedStudents.forEach { viewContext.delete($0) }
+
+                let newStudentEntities = template.students.map { student in
+                    let newStudent = StudentEntity(context: viewContext)
+                    newStudent.id = student.id
+                    newStudent.dni = student.dni
+                    newStudent.name = student.name
+                    return newStudent
+                }
+                entity.students = Set(newStudentEntities)
+
+                let newEvaluatedStudentEntities = template.evaluatedStudents.map { student in
+                    let newEvaluatedStudent = EvaluatedStudentEntity(context: viewContext)
+                    newEvaluatedStudent.id = student.id
+                    newEvaluatedStudent.dni = student.dni
+                    newEvaluatedStudent.name = student.name
+                    newEvaluatedStudent.scoreValue = NSDecimalNumber(value: student.score ?? 0.0)
+                    newEvaluatedStudent.answerMatrix = student.answerMatrix
+                    return newEvaluatedStudent
+                }
+                entity.evaluatedStudents = Set(newEvaluatedStudentEntities)
+
                 saveContext()
             }
         } catch {
@@ -164,7 +198,6 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
             if viewContext.hasChanges {
                 do {
                     try viewContext.save()
-                    print("Contexto guardado con éxito.")
                 } catch let error as NSError {
                     print("Error al guardar el contexto: \(error), \(error.userInfo)")
                 }

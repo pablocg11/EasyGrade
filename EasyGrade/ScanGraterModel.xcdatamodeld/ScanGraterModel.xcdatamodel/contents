@@ -6,6 +6,7 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="scoreValue" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <relationship name="examTemplate" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExamTemplateEntity" inverseName="evaluatedStudents" inverseEntity="ExamTemplateEntity"/>
     </entity>
     <entity name="ExamTemplateEntity" representedClassName="ExamTemplateEntity" syncable="YES">
         <attribute name="cancelledQuestions" optional="YES" attributeType="Transformable" valueTransformerName="BoolArrayTransformer"/>
@@ -18,6 +19,13 @@
         <attribute name="penaltyBlankAnswer" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="penaltyIncorrectAnswer" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="scoreCorrectAnswer" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="evaluatedStudents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EvaluatedStudentEntity"/>
+        <relationship name="evaluatedStudents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EvaluatedStudentEntity" inverseName="examTemplate" inverseEntity="EvaluatedStudentEntity"/>
+        <relationship name="students" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="StudentEntity" inverseName="examTemplate" inverseEntity="StudentEntity"/>
+    </entity>
+    <entity name="StudentEntity" representedClassName="StudentEntity" syncable="YES">
+        <attribute name="dni" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="examTemplate" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExamTemplateEntity" inverseName="students" inverseEntity="ExamTemplateEntity"/>
     </entity>
 </model>

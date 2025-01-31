@@ -21,7 +21,13 @@ struct EvaluatedStudentsListView: View {
                 VStack(spacing: 16) {
                     List {
                         ForEach(viewModel.evaluatedStudents, id: \.id) { student in
-                            EvaluatedStudentRow(student: student)
+                            NavigationLink(destination: EditEvaluatedStudentView(
+                                viewModel: viewModel,
+                                student: student,
+                                template: template
+                            )) {
+                                EvaluatedStudentRow(student: student)
+                            }
                         }
                         .onDelete(perform: deleteStudent)
                         

@@ -11,6 +11,7 @@ class EvaluatedStudentFactory {
     
     private func createExamCorrectionViewModel() -> ExamCorrectionViewModel {
         return ExamCorrectionViewModel(examCorrectionUseCase: createExamCorrectionUseCase(),
+                                       mathStudentUseCase: createMatchStudentUseCase(),
                                        saveEvaluatedStudentUseCase: createSaveEvaluatedStudentUseCase())
     }
     
@@ -19,17 +20,17 @@ class EvaluatedStudentFactory {
     }
     
     private func createExamCorrectionUseCase() -> CorrectExamUseCaseProtocol {
-        return CorrectExamUseCase(service: createExamCorrectionService())
+        return CorrectExamUseCase(service: ExamCorrectionService())
+    }
+    
+    private func createMatchStudentUseCase() -> MatchStudentUseCaseProtocol {
+        return MatchStudentUseCase(studentMatchingService: StudentMatchingService())
     }
     
     private func createSaveEvaluatedStudentUseCase() -> SaveEvaluatedStudentUseCaseProtocol {
         return SaveEvaluatedStudentUseCase(repository: createEvaluatedStudentRepository())
     }
-    
-    private func createExamCorrectionService() -> ExamCorrectionServiceProtocol{
-        return ExamCorrectionService()
-    }
-    
+
     private func createEvaluatedStudentRepository() -> EvaluatedStudentRepository {
         return EvaluatedStudentRepository()
     }

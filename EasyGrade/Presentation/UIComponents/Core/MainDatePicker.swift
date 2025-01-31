@@ -1,14 +1,12 @@
 import SwiftUI
 
 struct MainDatePicker: View {
-
     @Binding var selectedDate: Date
 
     var body: some View {
         DatePicker(
-                    selection: $selectedDate,
-                    in: Date()...,
-                    displayedComponents: .date
+            selection: $selectedDate,
+            displayedComponents: .date 
         ) {
             if Calendar.current.isDateInToday(selectedDate) {
                 MainText(text: "Fecha de la plantilla",

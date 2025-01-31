@@ -5,7 +5,7 @@ import UIKit
 
 protocol EvaluatedStudentRepositoryProtocol {
     func saveStudentinTemplate(student: EvaluatedStudent, template: ExamTemplate) async throws
-    func updateEvaluatedStudentScore(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: ExamTemplate) async throws
+    func updateEvaluatedStudent(student: EvaluatedStudent, template: ExamTemplate) async throws
     func fetchAllStudentsFromTemplate(template: ExamTemplate) async throws -> [EvaluatedStudent]
     func exportEvaluatedStudentsFile(template: ExamTemplate) async throws
     func deleteStudentFromTemplate(student: EvaluatedStudent, template: ExamTemplate) async throws 
@@ -43,8 +43,8 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             try self.saveContext()
         }
     }
-    
-    func updateEvaluatedStudentScore(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: ExamTemplate) async throws {
+
+    func updateEvaluatedStudent(student: EvaluatedStudent, template: ExamTemplate) async throws {
         try await self.viewContext.perform {
             let fetchRequest: NSFetchRequest<EvaluatedStudentEntity> = EvaluatedStudentEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", student.id as CVarArg)
@@ -53,7 +53,9 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
                 throw NSError(domain: "UpdateStudentError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Student not found."])
             }
             
-            studentEntity.scoreValue = NSDecimalNumber(value: studentScore.totalScore)
+            studentEntity.dni = student.dni
+            studentEntity.name = student.name
+            studentEntity.scoreValue = NSDecimalNumber(value: student.score ?? 0.0)
 
             try self.saveContext()
         }

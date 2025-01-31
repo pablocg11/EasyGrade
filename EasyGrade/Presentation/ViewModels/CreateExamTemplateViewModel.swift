@@ -38,6 +38,7 @@ class CreateExamTemplateViewModel: ObservableObject {
                     penaltyBlankAnswer: penaltyBlankAnswer,
                     cancelledQuestions: cancelledQuestions,
                     correctAnswerMatrix: correctAnswerMatrix,
+                    students: [],
                     evaluatedStudents: []
                 )
                 try await createExamTemplateUseCase.execute(template: template)

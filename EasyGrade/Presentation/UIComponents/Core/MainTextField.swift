@@ -5,6 +5,7 @@ struct MainTextField: View {
     @Binding var text: String
     var autoCapitalize: Bool
     var autoCorrection: Bool
+    var isDisabled: Bool = false
 
     var body: some View {
         TextField(placeholder, text: $text)
@@ -16,6 +17,7 @@ struct MainTextField: View {
             .autocorrectionDisabled(!autoCorrection)
             .foregroundColor(Color("AppPrimaryColor"))
             .accentColor(Color("AppPrimaryColor"))
+            .disabled(isDisabled)
     }
 }
 

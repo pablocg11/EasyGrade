@@ -2,14 +2,14 @@
 import Foundation
 
 class ListExamTemplateViewModel: ObservableObject {
-    private let getExamTemplatesUseCase: GetExamTemplatesUseCaseProtocol
+    private let getExamTemplateListUseCase: GetExamTemplateListUseCaseProtocol
     
     @Published var ExamTemplateList: [ExamTemplate] = []
     @Published var showLoading: Bool = false
     @Published var errorMessage: String?
     
-    init(getExamTemplatesUseCase: GetExamTemplatesUseCaseProtocol) {
-        self.getExamTemplatesUseCase = getExamTemplatesUseCase
+    init(getExamTemplateListUseCase: GetExamTemplateListUseCaseProtocol) {
+        self.getExamTemplateListUseCase = getExamTemplateListUseCase
     }
     
     func onAppear() {
@@ -18,7 +18,7 @@ class ListExamTemplateViewModel: ObservableObject {
         
         Task {
             do {
-                let templates = try await getExamTemplatesUseCase.execute()
+                let templates = try await getExamTemplateListUseCase.execute()
                 await handleResult(templates)
             } catch {
                 await handleError(error)

@@ -8,6 +8,8 @@ final class ExamDataProcessingService: ExamDataProcessingServiceProtocol {
     func processExamData(_ rawText: String) throws -> ExamData? {
         let lines = rawText.components(separatedBy: "\n").filter { !$0.isEmpty }
         
+        print(lines)
+                
         guard let name = extractData(from: lines, pattern: RegexPatterns.nameRegex)?
             .replacingOccurrences(of: "[\\,.]", with: "", options: .regularExpression)
             .uppercased() else {
@@ -15,8 +17,8 @@ final class ExamDataProcessingService: ExamDataProcessingServiceProtocol {
         }
                         
         guard let dni = extractData(from: lines, pattern: RegexPatterns.dniRegex)?
-            .replacingOccurrences(of: "[\\s\\-\\.]", with: "", options: .regularExpression)
-            .uppercased() else {
+                .replacingOccurrences(of: "[^\\dA-Z]", with: "", options: .regularExpression)
+                .uppercased() else {
             throw ExamDataProcessingError.missingField("dni")
         }
                         

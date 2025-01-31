@@ -9,17 +9,17 @@ struct EvaluatedStudentRow: View {
             Image(systemName: "person.fill")
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: 15, maxHeight: 15)
-                .padding()
+                .frame(maxWidth: 12, maxHeight: 12)
+                .padding(15)
                 .background(Color("AppPrimaryColor"))
                 .foregroundStyle(.white)
                 .cornerRadius(50)
                         
             VStack(alignment: .leading){
-                
                 MainText(text: student.name,
                          textColor: Color("AppPrimaryColor"),
-                         font: .callout)
+                         font: .system(size: 14),
+                         fontWeight: .semibold)
                 MainText(text: student.dni,
                          textColor: .black,
                          font: .caption,

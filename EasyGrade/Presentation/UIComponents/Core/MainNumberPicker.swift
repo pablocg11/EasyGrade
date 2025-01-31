@@ -15,8 +15,7 @@ struct MainNumberPicker: View {
                     in: minValue...maxValue)
             MainText(text: "\(selectedValue)",
                      textColor: Color("AppPrimaryColor"),
-                     font: .headline,
-                     fontWeight: .semibold)
+                     font: .headline)
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 5).stroke(Color("AppSecondaryColor"), lineWidth: 1))

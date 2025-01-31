@@ -3,6 +3,7 @@ import Foundation
 
 protocol ExamCorrectionServiceProtocol {
     func correctExam(studentAnswers: String, template: ExamTemplate) async throws -> ExamCorrectionResult
+    func reEvaluateStudentList(students: [EvaluatedStudent], template: ExamTemplate) async throws -> [EvaluatedStudent]
 }
 
 class ExamCorrectionService: ExamCorrectionServiceProtocol {
@@ -58,14 +59,25 @@ class ExamCorrectionService: ExamCorrectionServiceProtocol {
             areAnswersValid: areAnswersValid
         )
     }
-}
-
-private extension Character {
-    func asAnswerIndex() -> Int? {
-        guard let asciiValue = self.asciiValue, asciiValue >= 65, asciiValue <= 90 else {
-            return nil
+    
+    func reEvaluateStudentList(students: [EvaluatedStudent], template: ExamTemplate) async throws -> [EvaluatedStudent] {
+        var updatedStudents: [EvaluatedStudent] = []
+        
+        for student in students {
+            let answerMatrixString = (student.answerMatrix ?? [[]]).toAnswerString()
+            let correctedResult = try await correctExam(studentAnswers: answerMatrixString, template: template)
+            let updatedStudent = EvaluatedStudent(
+                id: student.id,
+                dni: student.dni,
+                name: student.name,
+                score: correctedResult.totalScore,
+                answerMatrix: student.answerMatrix
+            )
+            updatedStudents.append(updatedStudent)
         }
-        let index = Int(asciiValue - 65)
-        return index
+        
+        return updatedStudents
     }
 }
+
+

@@ -1,7 +1,7 @@
 import Foundation
 
 protocol UpdateEvaluatedStudentScoreUseCaseProtocol {
-    func execute(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: ExamTemplate) async throws
+    func execute(student: EvaluatedStudent, template: ExamTemplate) async throws
 }
 
 class UpdateEvaluatedStudentScoreUseCase: UpdateEvaluatedStudentScoreUseCaseProtocol {
@@ -11,7 +11,7 @@ class UpdateEvaluatedStudentScoreUseCase: UpdateEvaluatedStudentScoreUseCaseProt
         self.repository = repository
     }
     
-    func execute(studentScore: ExamCorrectionResult, student: EvaluatedStudent, template: ExamTemplate) async throws {
-        try await repository.updateEvaluatedStudentScore(studentScore: studentScore, student: student, template: template)
+    func execute(student: EvaluatedStudent, template: ExamTemplate) async throws {
+        try await repository.updateEvaluatedStudent(student: student, template: template)
     }
 }

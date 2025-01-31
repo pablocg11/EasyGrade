@@ -3,6 +3,7 @@ import SwiftUI
 struct MainNumberTextField: View {
     var placeholder: String
     @Binding var number: Double
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack {
@@ -12,10 +13,10 @@ struct MainNumberTextField: View {
             Spacer()
 
             TextField("", value: $number, formatter: NumberFormatter.decimal)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .foregroundColor(Color("AppPrimaryColor"))
-
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.trailing)
+                .foregroundColor(Color("AppPrimaryColor"))
+                .focused($isFocused)
         }
         .padding()
         .background(
@@ -24,6 +25,9 @@ struct MainNumberTextField: View {
         )
         .background(Color("AppSecondaryColor"))
         .cornerRadius(5)
+        .onTapGesture {
+            isFocused = true
+        }
     }
 }
 

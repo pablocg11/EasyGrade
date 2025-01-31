@@ -17,7 +17,7 @@ struct CameraPlaceholderView: View {
                         .fill(Color.gray.opacity(0.2))
                 )
                 .padding(10)
-            VStack(spacing: 100) {
+            VStack(spacing: 80) {
                 MainText(
                     text: "Coloque la información a escanear aquí",
                     font: .title3,
@@ -25,7 +25,7 @@ struct CameraPlaceholderView: View {
                     textAlignment: .center
                 )
                 MainText(
-                    text: "Asegúrese de que el contenido esté completamente visible y dentro del marco",
+                    text: "Asegúrese de que el contenido esté completamente visible",
                     textColor: .white,
                     font: .footnote,
                     fontWeight: .regular,
@@ -34,7 +34,7 @@ struct CameraPlaceholderView: View {
             }
             .padding(30)
         }
-        .frame(maxHeight: 300)
+        .frame(maxHeight: 250)
     }
 }
 
