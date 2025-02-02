@@ -36,6 +36,7 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             studentEntity.dni = student.dni
             studentEntity.score = student.score
             studentEntity.name = student.name
+            studentEntity.lastName = student.lastName
             studentEntity.answerMatrix = student.answerMatrix
 
             templateEntity.addToEvaluatedStudents(studentEntity)
@@ -55,6 +56,7 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
             
             studentEntity.dni = student.dni
             studentEntity.name = student.name
+            studentEntity.lastName = student.lastName
             studentEntity.scoreValue = NSDecimalNumber(value: student.score ?? 0.0)
 
             try self.saveContext()
@@ -95,6 +97,7 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
                     id: studentEntity.id ?? UUID(),
                     dni: studentEntity.dni ?? "",
                     name: studentEntity.name ?? "",
+                    lastName: studentEntity.lastName ?? "",
                     score: studentEntity.scoreValue?.doubleValue ?? 0.0,
                     answerMatrix: studentEntity.answerMatrix ?? [[]]
                 )
@@ -118,7 +121,7 @@ class EvaluatedStudentRepository: EvaluatedStudentRepositoryProtocol {
                 let answerMatrixString = self.convertAnswerMatrixToString(studentEntity.answerMatrix )
                 
                 let studentRow = """
-                "\(studentEntity.dni ?? "")","\(studentEntity.name ?? "")","\(String(format: "%.2f", studentEntity.scoreValue?.doubleValue ?? 0.0))","\(answerMatrixString)"
+                "\(studentEntity.dni ?? "")","\(studentEntity.name ?? "") \(studentEntity.lastName ?? "")","\(String(format: "%.2f", studentEntity.scoreValue?.doubleValue ?? 0.0))","\(answerMatrixString)"
                 """
                 csvContent.append("\(studentRow)\n")
             }

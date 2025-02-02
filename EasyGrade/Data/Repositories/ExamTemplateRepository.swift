@@ -29,11 +29,21 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
         entity.cancelledQuestions = template.cancelledQuestions
         entity.correctAnswerMatrix = template.correctAnswerMatrix
         
+        entity.students = Set(template.students.map { student in
+            let studentEntity = StudentEntity(context: viewContext)
+            studentEntity.id = student.id
+            studentEntity.dni = student.dni
+            studentEntity.name = student.name
+            studentEntity.lastName = student.lastName
+            return studentEntity
+        })
+        
         entity.evaluatedStudents = Set(template.evaluatedStudents.map { student in
             let studentEntity = EvaluatedStudentEntity(context: viewContext)
             studentEntity.id = student.id
             studentEntity.dni = student.dni
             studentEntity.name = student.name
+            studentEntity.lastName = student.lastName
             studentEntity.scoreValue = NSDecimalNumber(value: student.score ?? 0.0)
             studentEntity.answerMatrix = student.answerMatrix
             return studentEntity
@@ -61,7 +71,8 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                     students: entity.students.map { studentEntity in
                         Student(id:  studentEntity.id ?? UUID(),
                                 dni: studentEntity.dni ?? "",
-                                name: studentEntity.name ?? ""
+                                name: studentEntity.name ?? "",
+                                lastName: studentEntity.lastName ?? ""
                         )
                     },
                     evaluatedStudents: entity.evaluatedStudents.map { studentEntity in
@@ -69,6 +80,7 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                             id: studentEntity.id ?? UUID(),
                             dni: studentEntity.dni ?? "",
                             name: studentEntity.name ?? "",
+                            lastName: studentEntity.lastName ?? "",
                             score: studentEntity.scoreValue?.doubleValue ?? 0.0,
                             answerMatrix: studentEntity.answerMatrix ?? [[]]
                         )
@@ -90,7 +102,8 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                 let students = entity.students.map { studentEntity in
                     Student(id: studentEntity.id ?? UUID(),
                             dni: studentEntity.dni ?? "",
-                            name: studentEntity.name ?? ""
+                            name: studentEntity.name ?? "",
+                            lastName: studentEntity.lastName ?? ""
                     )
                 }
                 
@@ -99,6 +112,7 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                         id: studentEntity.id ?? UUID(),
                         dni: studentEntity.dni ?? "",
                         name: studentEntity.name ?? "",
+                        lastName: studentEntity.lastName ?? "",
                         score: studentEntity.scoreValue?.doubleValue ?? 0.0,
                         answerMatrix: studentEntity.answerMatrix ?? [[]]
                     )
@@ -171,6 +185,7 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                     newStudent.id = student.id
                     newStudent.dni = student.dni
                     newStudent.name = student.name
+                    newStudent.lastName = student.lastName
                     return newStudent
                 }
                 entity.students = Set(newStudentEntities)
@@ -180,6 +195,7 @@ class ExamTemplateRepository: ExamTemplateRepositoryProtocol {
                     newEvaluatedStudent.id = student.id
                     newEvaluatedStudent.dni = student.dni
                     newEvaluatedStudent.name = student.name
+                    newEvaluatedStudent.lastName = student.lastName
                     newEvaluatedStudent.scoreValue = NSDecimalNumber(value: student.score ?? 0.0)
                     newEvaluatedStudent.answerMatrix = student.answerMatrix
                     return newEvaluatedStudent

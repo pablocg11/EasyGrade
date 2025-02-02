@@ -73,7 +73,6 @@ class EditExamTemplateViewModel: ObservableObject {
             switch result {
             case .success(let students):
                 self.studentsImported = students
-                print(students)
             case .failure(let error):
                 errorMessage = "Error al importar estudiantes: \(error.localizedDescription)"
             }

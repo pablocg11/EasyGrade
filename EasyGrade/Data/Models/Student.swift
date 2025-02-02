@@ -11,10 +11,12 @@ struct Student: Identifiable, Hashable {
     var id: UUID
     var dni: String
     var name: String
+    var lastName: String
     
-    init(id: UUID, dni: String, name: String) {
+    init(id: UUID, dni: String, name: String, lastName: String) {
         self.id = id
         self.dni = dni
         self.name = name
+        self.lastName = lastName
     }
 }

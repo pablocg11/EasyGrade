@@ -31,6 +31,13 @@ struct EditEvaluatedStudentView: View {
             )
             
             MainTextField(
+                placeholder: "Apellidos",
+                text: $student.lastName,
+                autoCapitalize: true,
+                autoCorrection: true
+            )
+            
+            MainTextField(
                 placeholder: "DNI",
                 text: $student.dni,
                 autoCapitalize: false,
@@ -54,7 +61,7 @@ struct EditEvaluatedStudentView: View {
         }
         .padding()
         .background(Color.white)
-        .navigationTitle(student.name)
+        .navigationTitle("\(student.name) \(student.lastName)")
     }
     
     private func saveChanges() {
@@ -62,6 +69,7 @@ struct EditEvaluatedStudentView: View {
             id: student.id,
             dni: student.dni,
             name: student.name,
+            lastName: student.lastName,
             score: student.score,
             answerMatrix: student.answerMatrix
         )

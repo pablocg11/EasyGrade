@@ -9,12 +9,12 @@ import SwiftUI
 
 struct ExamCorrectionView: View {
     @State var extractedData: ExamData
-        var matchingStudent: Student?
-        let saveAction: () -> Void
-        let template: ExamTemplate
-        let examCalification: ExamCorrectionResult
-        @Binding var selectedStudent: Student?
-        @State var showNotification: Bool = false
+    var matchingStudent: Student?
+    let saveAction: () -> Void
+    let template: ExamTemplate
+    let examCalification: ExamCorrectionResult
+    @Binding var selectedStudent: Student?
+    @State var showNotification: Bool = false
 
     var body: some View {
         ZStack {
@@ -29,7 +29,7 @@ struct ExamCorrectionView: View {
                     if let student = selectedStudent ?? matchingStudent {
                         MainTextField(
                             placeholder: "Nombre",
-                            text: .constant(student.name),
+                            text: .constant("\(student.name) \(student.lastName)"),
                             autoCapitalize: true,
                             autoCorrection: true,
                             isDisabled: true

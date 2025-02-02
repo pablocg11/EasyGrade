@@ -16,7 +16,7 @@ struct EvaluatedStudentRow: View {
                 .cornerRadius(50)
                         
             VStack(alignment: .leading){
-                MainText(text: student.name,
+                MainText(text: "\(student.name) \(student.lastName)",
                          textColor: Color("AppPrimaryColor"),
                          font: .system(size: 14),
                          fontWeight: .semibold)

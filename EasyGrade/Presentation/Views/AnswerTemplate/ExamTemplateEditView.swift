@@ -41,7 +41,7 @@ struct ExamTemplateEditView: View {
     }
     
     private var isTemplateValid: Bool {
-        return templateName.isEmpty || correctAnswerScore <= 0 || wrongAnswerPenalty <= 0
+        return templateName.isEmpty || correctAnswerScore <= 0 || wrongAnswerPenalty <= 0 || blankAnswerPenalty < 0
     }
     
     private func adjustCancelledQuestions() {

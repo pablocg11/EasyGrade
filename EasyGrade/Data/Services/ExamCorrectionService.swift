@@ -70,6 +70,7 @@ class ExamCorrectionService: ExamCorrectionServiceProtocol {
                 id: student.id,
                 dni: student.dni,
                 name: student.name,
+                lastName: student.lastName,
                 score: correctedResult.totalScore,
                 answerMatrix: student.answerMatrix
             )

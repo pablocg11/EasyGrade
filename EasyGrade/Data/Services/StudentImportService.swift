@@ -47,12 +47,9 @@ final class StudentImportService: StudentImportServiceProtocol {
                 let firstName = columns[1].trimmingCharacters(in: .whitespacesAndNewlines)
                 let dni = columns[2].trimmingCharacters(in: .whitespacesAndNewlines)
 
-                let fullName = "\(firstName) \(lastName)"
-
-                let student = Student(id: UUID(), dni: dni, name: fullName)
+                let student = Student(id: UUID(), dni: dni, name: firstName, lastName: lastName)
                 students.append(student)
             }
-            
         } catch let error as NSError {
             return .failure(.fileReadError("Error al leer el archivo CSV: \(error.localizedDescription)"))
         }

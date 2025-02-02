@@ -80,6 +80,7 @@ class ExamCorrectionViewModel: ObservableObject {
                     id: UUID(),
                     dni: student.dni,
                     name: student.name,
+                    lastName: student.lastName,
                     score: newCorrectionResult.totalScore,
                     answerMatrix: parseAnswers(editedAnswers, template: template)
                 )

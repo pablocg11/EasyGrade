@@ -125,6 +125,7 @@ struct RecognitionView: View {
         let studentEvaluated = EvaluatedStudent(
             dni: student.dni,
             name: student.name,
+            lastName: student.lastName,
             score: examCalification.totalScore,
             answerMatrix: parseAnswers(evaluatedStudent.answers, template: template)
         )

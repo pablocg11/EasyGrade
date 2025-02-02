@@ -4,6 +4,7 @@
         <attribute name="answerMatrix" optional="YES" attributeType="Transformable" valueTransformerName="BoolMatrixTransformer"/>
         <attribute name="dni" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastName" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="scoreValue" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
         <relationship name="examTemplate" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExamTemplateEntity" inverseName="evaluatedStudents" inverseEntity="ExamTemplateEntity"/>
@@ -25,6 +26,7 @@
     <entity name="StudentEntity" representedClassName="StudentEntity" syncable="YES">
         <attribute name="dni" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastName" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="examTemplate" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExamTemplateEntity" inverseName="students" inverseEntity="ExamTemplateEntity"/>
     </entity>

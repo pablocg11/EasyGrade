@@ -20,6 +20,7 @@ extension EvaluatedStudentEntity {
     @NSManaged public var dni: String?
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?
+    @NSManaged public var lastName: String?
     @NSManaged public var scoreValue: NSDecimalNumber?
 
     public var score: Double? {

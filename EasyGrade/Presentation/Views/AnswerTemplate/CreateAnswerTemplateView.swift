@@ -16,10 +16,12 @@ struct CreateExamTemplateView: View {
     @State private var cancelledQuestions: [Bool] = Array(repeating: false, count: 10)
     @State private var correctAnswerMatrix: [[Bool]] = Array(repeating: Array(repeating: false, count: 4), count: 10)
     
-    @State private var showNotification: Bool = false
+    @State private var showDocumentPicker = false
+    @State private var showStudentImportNotification: Bool = false
+    @State private var showTemplateCreationNotification: Bool = false
     
     private var isTemplateValid: Bool {
-        return templateName.isEmpty || correctAnswerScore <= 0 || wrongAnswerPenalty < 0 || blankAnswerPenalty < 0
+        return templateName.isEmpty || correctAnswerScore <= 0 || wrongAnswerPenalty <= 0 || blankAnswerPenalty < 0
     }
     
     private var hasValidCorrectAnswers: Bool {
@@ -42,23 +44,53 @@ struct CreateExamTemplateView: View {
                         }
                     }
                     
-                    MainButton(title: "Guardar", action: {
-                        saveTemplate()
-                        showNotification = true
+                    VStack(spacing: 10){
+                        MainButton(title: "Importar alumnos") {
+                            showDocumentPicker = true
+                        }
+                        
+                        MainButton(title: "Guardar", action: {
+                            saveTemplate()
+                            showTemplateCreationNotification = true
+                        }
+                                   ,disabled: isTemplateValid || !hasValidCorrectAnswers)
                     }
-                               ,disabled: isTemplateValid || !hasValidCorrectAnswers)
                 }
                 .padding()
                 .onChange(of: numberOfQuestions) { adjustFields() }
                 .onChange(of: numberOfAnswers) { adjustFields() }
+                .onChange(of: viewModel.studentsImported) {
+                    if let students = viewModel.studentsImported, !students.isEmpty {
+                        showStudentImportNotification = true
+                    }
+                }
+                .sheet(isPresented: $showDocumentPicker) {
+                    DocumentPicker { url in
+                        Task {
+                            await viewModel.importStudents(from: url)
+                        }
+                    }
+                }
                 
-                if showNotification {
-                    notificationView()
+                if showTemplateCreationNotification {
+                    templateCreationNotificationView()
                         .zIndex(1)
                         .onAppear {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                                 withAnimation {
-                                    showNotification = false 
+                                    showTemplateCreationNotification = false
+                                }
+                            }
+                        }
+                }
+                
+                if showStudentImportNotification {
+                    studentListImportedNotification()
+                        .zIndex(1)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                                withAnimation {
+                                    showStudentImportNotification = false
                                 }
                             }
                         }
@@ -67,9 +99,18 @@ struct CreateExamTemplateView: View {
         }
     }
     
-    private func notificationView() -> some View {
-        ConfirmationNotification(titleNotification: "Plantilla creada", messageNotification: "La plantilla ha sido creada exitosamente", error: false)
+    private func templateCreationNotificationView() -> some View {
+        ConfirmationNotification(titleNotification: "Plantilla de examen creada", messageNotification: "La plantilla de examen ha sido creada correctamente", error: false)
             .transition(.scale(scale: 0.9).combined(with: .opacity).animation(.easeInOut))
+    }
+    
+    private func studentListImportedNotification() -> some View {
+        ConfirmationNotification(
+            titleNotification: "Alumnos importados",
+            messageNotification: "Se han importado \(viewModel.studentsImported?.count ?? 0) alumnos correctamente.",
+            error: false
+        )
+        .transition(.scale(scale: 0.9).combined(with: .opacity).animation(.easeInOut))
     }
 }
 

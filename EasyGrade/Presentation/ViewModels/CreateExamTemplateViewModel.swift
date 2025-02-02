@@ -3,12 +3,16 @@ import Foundation
 
 class CreateExamTemplateViewModel: ObservableObject {
     private let createExamTemplateUseCase: CreateExamTemplateUseCaseProtocol
+    private let importStudentListFromCSV: ImportStudentListFromCSVProtocol
     
+    @Published var studentsImported: [Student]?
     @Published var showLoading: Bool = false
     @Published var errorMessage: String?
     
-    init(createExamTemplateUseCase: CreateExamTemplateUseCaseProtocol) {
+    init(createExamTemplateUseCase: CreateExamTemplateUseCaseProtocol,
+         importStudentListFromCSV: ImportStudentListFromCSVProtocol) {
         self.createExamTemplateUseCase = createExamTemplateUseCase
+        self.importStudentListFromCSV = importStudentListFromCSV
     }
     
     func createExamTemplate(name: String,
@@ -25,7 +29,7 @@ class CreateExamTemplateViewModel: ObservableObject {
         Task { @MainActor in
             showLoading = true
             errorMessage = nil
-            
+                        
             do {
                 let template = ExamTemplate(
                     id: UUID(),
@@ -38,7 +42,7 @@ class CreateExamTemplateViewModel: ObservableObject {
                     penaltyBlankAnswer: penaltyBlankAnswer,
                     cancelledQuestions: cancelledQuestions,
                     correctAnswerMatrix: correctAnswerMatrix,
-                    students: [],
+                    students: self.studentsImported ?? [],
                     evaluatedStudents: []
                 )
                 try await createExamTemplateUseCase.execute(template: template)
@@ -46,6 +50,21 @@ class CreateExamTemplateViewModel: ObservableObject {
                 errorMessage = "\(error.localizedDescription)"
             }
             showLoading = false
+        }
+    }
+    
+    func importStudents(from url: URL) async {
+        Task { @MainActor in
+            showLoading = true
+            defer { showLoading = false }
+        
+            let result = await importStudentListFromCSV.execute(url)
+            switch result {
+            case .success(let students):
+                self.studentsImported = students
+            case .failure(let error):
+                errorMessage = "Error al importar estudiantes: \(error.localizedDescription)"
+            }
         }
     }
 }

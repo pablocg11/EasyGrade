@@ -14,17 +14,22 @@ struct MainSelector: View {
     
     var body: some View {
         Menu {
-            ForEach(students, id: \.id) { student in
+            ForEach(sortedStudents, id: \.id) { student in
                 Button(action: {
                     selectedStudent = student
                 }) {
-                    Text(student.name)
+                    Text("\(student.name) \(student.lastName)")
                 }
             }
         } label: {
             HStack {
-                Text(selectedStudent?.name ?? placeholder)
-                    .foregroundColor(selectedStudent == nil ? .gray : Color("AppPrimaryColor"))
+                if let student = selectedStudent {
+                    Text("\(student.name) \(student.lastName)")
+                        .foregroundColor(selectedStudent == nil ? .gray : Color("AppPrimaryColor"))
+                } else {
+                    Text(placeholder)
+                        .foregroundColor(.gray)
+                }
                 Spacer()
                 Image(systemName: "chevron.down")
                     .foregroundColor(Color("AppPrimaryColor"))
@@ -34,5 +39,9 @@ struct MainSelector: View {
             .background(Color("AppSecondaryColor"))
             .cornerRadius(5)
         }
+    }
+    
+    private var sortedStudents: [Student] {
+        students.sorted { $0.lastName < $1.lastName }
     }
 }
